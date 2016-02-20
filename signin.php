@@ -30,8 +30,7 @@ abstract class LoginResult {
 	const WRONG_PASSWORD = 4; // TODO: this could be used by an attacker
 }
 
-// start new, or restore existing session
-session_start();
+init_session();
 
 include "include/mysql_open_database.inc";
 include "include/cmdline_to_postandget_hack.inc";

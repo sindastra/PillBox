@@ -43,8 +43,7 @@ abstract class LogEntryStatus {
 	const SKIPPED = 2;
 }
 
-// start new, or restore existing session
-session_start();
+init_session();
 
 // include functions
 include "include/cmdline_to_postandget_hack.inc";

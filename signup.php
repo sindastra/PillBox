@@ -34,8 +34,7 @@ abstract class SignupResult {
 	const EMAIL_IN_USE = 4;
 }
 
-// start new, or restore existing session
-// session_start();
+init_session();
 
 include "include/mysql_open_database.inc";
 include "include/cmdline_to_postandget_hack.inc";

@@ -20,15 +20,24 @@
  * Login-related functions
  */
 
-function is_logged_in() {
-	// make sure all required variables are set
-	if(!array_key_exists("username", $_SESSION) || !array_key_exists("security_token", $_SESSION)
-	   || empty($_SESSION["username"]) || empty($_SESSION["security_token"]) )
-		die("Internal login error!");
+init_session() {
+	// start new, or restore existing session
+	session_start();
 
-	// checking token should be enough
-	return $_SESSION["security_token"] == "demo_token";
-	// TODO: use real token
+	// check fi all variables are set
+	if(!array_key_exists("username", $_SESSION)
+	   || empty($_SESSION["username"]) ) {
+		// if anything is missing here, clear the session, just to be safe.
+		session_destroy();
+		unset $_SESSION;
+		session_start();
+	}
+}
+
+function is_logged_in() {
+	// TODO make this much better
+	// for now, just check if a username is set
+	return array_key_exists("username", $_SESSION) && !empty($_SESSION['username']);
 }
 
 /**

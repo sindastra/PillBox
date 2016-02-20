@@ -38,8 +38,7 @@ abstract class RequestType {
 	const LOG = 0;
 }
 
-// start new, or restore existing session
-session_start();
+init_session();
 
 include "include/cmdline_to_postandget_hack.inc";
 include "include/mysql_open_database.inc";
