@@ -32,4 +32,3 @@ if(!$mysql)
 if(!mysql_select_db($mysqlc['database'], $mysql))
 	die("Failed to select database!");
 
-?>
