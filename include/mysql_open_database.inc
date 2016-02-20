@@ -2,6 +2,7 @@
 /**
  * PillBox
  * Copyright (C) 2016 Sindastra <sindastra@gmail.com>
+ * Copyright (C) 2016 Artox <privacy@not.given>
  *
  * The above copyright notice shall be included in
  * all copies or substantial portions of the Software.
@@ -14,12 +15,21 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
- 
-include "include/mysql_open_database.inc";
 
+/**
+ * Include this script whenever access to teh database is needed.
+ * The connection handle will be stored in $mysql
+ */
+
+require "config.php";
+
+// first connect to mysql server
+$mysql = mysql_connect($mysqlc['server'], $mysqlc['username'], $mysqlc['password']);
 if(!$mysql)
-	echo "Failed to connect!";
-else
-	echo "Connected.";
+	die("Failed to connect to MySQL server!");
+
+// now open database
+if(!mysql_select_db($mysqlc['database'], $mysql))
+	die("Failed to select database!");
 
 ?>
