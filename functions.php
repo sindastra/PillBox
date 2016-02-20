@@ -26,7 +26,7 @@ function init_session() {
 
 	// check fi all variables are set
 	if( !array_key_exists("username", $_SESSION) || empty($_SESSION["username"])
-	    !array_key_exists("userid", $_SESSION) || empty($_SESSION['userid']) ) {
+	    || !array_key_exists("userid", $_SESSION) || empty($_SESSION['userid']) ) {
 		// if anything is missing here, clear the session, just to be safe.
 		session_destroy();
 		unset($_SESSION);

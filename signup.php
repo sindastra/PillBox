@@ -103,9 +103,16 @@ if($count != 1) {
 	exit(0);
 }
 
+// get new users ID
+$id = mysql_insert_id($mysql);
+if($id == FALSE || $id == 0) {
+	$result['error'] = "An unexpected error occured!";
+	break;
+}
+
 // log-in user right now
 $_SESSION['userid'] = $id;
-$_SESSION['username'] = $username;
+$_SESSION['username'] = $_POST['username'];
 
 
 
