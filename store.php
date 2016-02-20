@@ -43,6 +43,8 @@
  * maximum_dosage_unit
  * note
  * 
+ * returns medication id
+ * 
  * MEDICATION_LOG: log taking or not taking medication
  * parameters:
  * medication_id
@@ -50,8 +52,21 @@
  * timestamp (when taken)
  * status
  * note
- *
+ * 
  * returns: log entry id
+ * 
+ * MEASUREMENT_ADD: add new measurement description/category
+ * 
+ * parameters:
+ * name
+ * unit
+ * 
+ * MEASUREMENT_LOG: log a measurements values
+ * 
+ * parameters:
+ * measurement_id
+ * value
+ * timestamp
  * 
  * There will be a reply with an ID and an error string
  * non-zero ID means success, and error will be empty
@@ -62,6 +77,8 @@
 abstract class StoreType {
 	const MEDICATION_ADD = 1;
 	const MEDICATION_LOG = 2;
+	const MEASUREMENT_ADD = 3;
+	const MEASUREMENT_LOG = 4;
 }
 
 abstract class LogEntryStatus {
@@ -122,7 +139,7 @@ switch($data->type) {
 
 		// store
 		$query = sprintf('INSERT INTO `medications` (`user_id`, `name`, `active_agent`, `dosage_package`, `dosage_package_unit`, `dosage_to_take`, `dosage_to_take_unit`, `colour`, `shape`, `food_instructions`, `indication`, `minimum_spacing`, `minimum_spacing_unit`, `maximum_dosage`, `maximum_dosage_unit`, `note`, `time`) VALUES (%u, "%s", "%s", %F, "%s", %F, "%s", %u, %u, %u, "%s", %F, "%s", %F, "%s", "%s", NOW())',
-		    $data->name, $data->active_agent, $data->dosage_package,
+		    $_SESSION['userid'], $data->name, $data->active_agent, $data->dosage_package,
 		    $data->dosage_package_unit, $data->dosage_to_take, $data->dosage_to_take_unit,
 		    $data->colour, $data->shape, $data->food_instructions,
 		    $data->indication, $data->minimum_spacing, $data->minimum_spacing_unit,
@@ -169,6 +186,61 @@ switch($data->type) {
 		}
 
 		// get ID of new Log entry
+		$id = mysql_insert_id($mysql);
+		if($id == FALSE || $id == 0) {
+			$result['error'] = "An unexpected error occured!";
+			break;
+		}
+
+		// return ID as proof of success
+		$result['id'] = $id;
+		break;
+	case StoreType::MEASUREMENT_ADD:
+		// expected fields: name, unit
+
+		// name should not be empty
+		// unit should not be empty
+		if(empty($data->name) || empty($data->unit)) {
+			$result['error'] = 'Invalid data!';
+			break;
+		}
+
+		// store
+		$query = sprintf('INSERT INTO `measurements` (`user_id`, `name`, `unit`, `time`) VALUES (%u, "%s", "%s", NOW())', $_SESSION['userid'], $data->name, $data->unit);
+		if(mysql_query($query, $mysql) == FALSE) {
+			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+			break;
+		}
+
+		// get ID of new measurement entry
+		$id = mysql_insert_id($mysql);
+		if($id == FALSE || $id == 0) {
+			$result['error'] = "An unexpected error occured!";
+			break;
+		}
+
+		// return ID as proof of success
+		$result['id'] = $id;
+		break;
+	case StoreType::MEASUREMENT_LOG:
+		// expected fields: measurement_id, value, timestamp
+
+		// measurement_id should be numeric
+		// value should be numeric
+		// timestamp should be numeric
+		if(!is_numeric($data->measurement_id) || !is_numeric($data->value) || !is_numeric($data->timestamp)) {
+			$result['error'] = 'Invalid data!';
+			break;
+		}
+
+		// store
+		$query = sprintf('INSERT INTO `measurement_log` (`measurement_id`, `measurement`, `time_measured`, `time`) VALUES (%u, %F, FROM_UNIXTIME(%u), NOW())', $data->measurement_id, $data->value, $data->timestamp);
+		if(mysql_query($query, $mysql) == FALSE) {
+			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+			break;
+		}
+
+		// get ID of new measurement entry
 		$id = mysql_insert_id($mysql);
 		if($id == FALSE || $id == 0) {
 			$result['error'] = "An unexpected error occured!";
