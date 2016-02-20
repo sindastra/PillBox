@@ -30,3 +30,30 @@ function is_logged_in() {
 	return $_SESSION["security_token"] == "demo_token";
 	// TODO: use real token
 }
+
+/**
+ * Password related functions.
+ */
+
+function sha512($data)
+{
+	return hash('sha512', $data);
+}
+
+function generate_salt()
+{
+	return sha512(openssl_random_pseudo_bytes(10240));
+}
+
+function hash_password($password, $salt)
+{
+	return sha512($password.$salt);
+}
+
+function check_password($password_hashed, $password_text, $salt)
+{
+	if($password_hashed === hash_password($password_text, $salt))
+		return true;
+	else
+		return false;
+}
