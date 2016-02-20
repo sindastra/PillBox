@@ -27,7 +27,7 @@
  * TODO
  * There will be a reply with an ID and an error string
  * non-zero ID means success, and error will be empty
- * 
+ * { id = 0, error = "abcdef" }
  */
 
 // define constants

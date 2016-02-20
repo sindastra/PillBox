@@ -16,6 +16,20 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * use POST
+ * fields are called: username, password
+ * returned is a numeric error code
+ */
+
+abstract class LoginResult {
+	const SUCCESS = 0;
+	const INVALID_REQUEST = 1;
+	const INTERNAL_ERROR = 2;
+	const INVALID_USERNAME = 3;
+	const WRONG_PASSWORD = 4; // TODO: this could be used by an attacker
+}
+
 // start new, or restore existing session
 session_start();
 
@@ -31,9 +45,28 @@ if(!array_key_exists("password", $_POST)) {
 	die("Please supply a password!");
 }
 
-// Soooooo
-// we need to check username and password
-// store the username in the session?
-// and an authentication token for later use?
-$_SESSION["username"] = "demo";
-$_SESSION["security_token"] = "demo_token";
+// see if the username exists, and retrieve its data
+$query = sprintf('SELECT `id`, `username`, `password`, `email`, `salt`, `time` FROM `accounts` WHERE `username`="%s" OR `email`="%s"', $_POST['username'], $_POST['username']);
+$r = mysql_query($query, $mysql);
+if($r == FALSE) {
+	$error = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+	echo LoginResult::INTERNAL_ERROR;
+	exit(0);
+}
+$r = mysql_fetch_row($r);
+if($r == FALSE) {
+	$error = 'No result';
+	echo LoginResult::INVALID_USERNAME;
+	exit(0);
+}
+list($id, $username, $password, $email, $salt, $time) = $r;
+
+// check password
+// TODO
+
+// store log-in status in session
+$_SESSION['userid'] = $id;
+$_SESSION['username'] = $username;
+
+// return positive result
+echo LoginResult::SUCCESS;
