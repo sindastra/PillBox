@@ -35,12 +35,32 @@
  * start : if zero, matches from beginning of time, else UNIXTIME
  * end : if zero, matches till end of time, else UNIXTIME
  * 
+ * MEASUREMENTS_GET: get all measurement definitions of current user
+ * takes no parameters
+ * 
+ * MEASUREMENT_LOG_GET: get the measurement log for all, or given measurement definition; in selected timespan
+ * 
+ * parameters:
+ * measurement_id : if zero, match all measurements
+ * start : if zero, matches from beginning of time, else UNIXTIME
+ * end : if zero, matches till end of time, else UNIXTIME
+ * 
+ * SCHEDULE_GET: get all schedules for given medication, or for all medications; wich are active in given timespan
+ * 
+ * parameters:
+ * medication_id : if zero, matches all medications
+ * start : if zero, matches from beginning of time, else UNIXTIME
+ * end : if zero, matches till end of time, else UNIXTIME
+ * 
  * returns 2 fields: data [array] and error [string] as json
  */
 
 abstract class RequestType {
 	const MEDICATIONS_GET = 0;
 	const MEDICATION_LOG_GET = 1;
+	const MEASUREMENTS_GET = 2;
+	const MEASUREMENT_LOG_GET = 3;
+	const SCHEDULE_GET = 4;
 }
 
 include "functions.php";
@@ -97,8 +117,8 @@ switch($data->type) {
 		break;
 	case RequestType::MEDICATION_LOG_GET:
 		// expected input data: medication_id, start, end
-		if(!is_numeric($data->$medication_id) || !is_numeric($data->start) || !is_numeric($data->end)) {
-			$result['error'] = 'Invalid data!';
+		if(!is_numeric($data->medication_id) || !is_numeric($data->start) || !is_numeric($data->end)) {
+			$result['error'] = 'Invalid or missing data!';
 			break;
 		}
 
@@ -134,6 +154,66 @@ switch($data->type) {
 		}
 
 		// Done
+		break;
+	case RequestType::MEASUREMENTS_GET:
+		$query = sprintf('SELECT `id`, `name`, `unit`, `time` FROM `measurements` WHERE `user_id`=%u', $_SESSION['userid']);
+		$r = mysql_query($query, $mysql);
+		if($r == FALSE) {
+			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+			break;
+		}
+
+		// return all data as is
+		$count = mysql_num_rows($r);
+		for($i = 0; $i < $count; $i++) {
+			$row = mysql_fetch_assoc($r);
+			$result['data'][] = $row;
+		}
+
+		// Done
+		break;
+	case RequestType::MEASUREMENT_LOG_GET:
+		// expected input data: measurement_id, start, end
+		if(!is_numeric($data->measurement_id) || !is_numeric($data->start) || !is_numeric($data->end)) {
+			$result['error'] = 'Invalid or missing data!';
+			break;
+		}
+
+		// This is a complicated query, so make 4 of them!
+		// is measurement ID given?
+		if($data->measurement_id > 0) {
+			// is end-time given?
+			if($data->end > 0) {
+				$query = sprintf('SELECT `id`, `measurement_id`, `measurement`, `time_measured`, `time` FROM `measurement_log` WHERE `measurement_id` = %u AND `time_measured` > FROM_UNIXTIME(%u)', $data->measurement_id, $data->start);
+			} else {
+				$query = sprintf('SELECT `id`, `measurement_id`, `measurement`, `time_measured`, `time` FROM `measurement_log` WHERE `measurement_id` = %u AND `time_measured` > FROM_UNIXTIME(%u) AND `time_easured` < FROM_UNIXTIME(%u)', $data->measurement_id, $data->start, $data->end);
+			}
+		} else {
+			// is end-time given?
+			if($data->end > 0) {
+				$query = sprintf('SELECT l.`id`, l.`measurement_id`, l.`measurement`, l.`time_measured`, l.`time` FROM `measurement_log` l LEFT JOIN `measurements` m ON (l.`measurement_id` = m.`id`) WHERE m.`user_id`=%u AND `time_measured` > FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start);
+			} else {
+				$query = sprintf('SELECT l.`id`, l.`measurement_id`, l.`measurement`, l.`time_measured`, l.`time` FROM `measurement_log` l LEFT JOIN `measurements` m ON (l.`measurement_id` = m.`id`) WHERE m.`user_id`=%u AND `time_measured` > FROM_UNIXTIME(%u) AND `time_easured` < FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start, $data->end);
+			}
+		}
+		// fetch data
+		$r = mysql_query($query, $mysql);
+		if($r == FALSE) {
+			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+			break;
+		}
+
+		// return all data as is
+		$count = mysql_num_rows($r);
+		for($i = 0; $i < $count; $i++) {
+			$row = mysql_fetch_assoc($r);
+			$result['data'][] = $row;
+		}
+
+		// Done
+		break;
+	case RequestType::SCHEDULE_GET:
+		
 		break;
 	default:
 		$result['error'] = 'Invalid type!';
