@@ -2,6 +2,7 @@
 /**
  * PillBox
  * Copyright (C) 2016 Sindastra <sindastra@gmail.com>
+ * Copyright (C) 2016 Artox <privacy@not.given>
  *
  * The above copyright notice shall be included in
  * all copies or substantial portions of the Software.
