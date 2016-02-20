@@ -26,8 +26,7 @@ abstract class LoginResult {
 	const SUCCESS = 0;
 	const INVALID_REQUEST = 1;
 	const INTERNAL_ERROR = 2;
-	const INVALID_USERNAME = 3;
-	const WRONG_PASSWORD = 4; // TODO: this could be used by an attacker
+	const INVALID_DATA = 3;
 }
 
 include "functions.php";
@@ -57,7 +56,7 @@ if($r == FALSE) {
 $r = mysql_fetch_row($r);
 if($r == FALSE) {
 	$error = 'No result';
-	echo LoginResult::INVALID_USERNAME;
+	echo LoginResult::INVALID_DATA;
 	exit(0);
 }
 list($id, $username, $password, $email, $salt, $time) = $r;
@@ -65,7 +64,7 @@ list($id, $username, $password, $email, $salt, $time) = $r;
 // check given password with hashed one from database
 // TODO
 if(!check_password($password, $_POST['password'], $salt)) {
-	echo LoginResult::INVALID_USERNAME;
+	echo LoginResult::INVALID_DATA;
 	exit(0);
 }
 
