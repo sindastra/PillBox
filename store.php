@@ -21,7 +21,7 @@
  * use POST data in field called "json"
  *
  * Format:
- * { type = "log_medication", gid = [GID], timestamp = [UNIXTIME], status = [INT] }
+ * { type = "log_medication", medication_id = [GID], timestamp = [UNIXTIME], status = [INT] }
  * { type = "add_medication", TODO }
  * { type = "add_schedule????", TODO }
  * TODO
@@ -79,17 +79,25 @@ if($data == NULL) {
 // execute
 switch($data->type) {
 	case StoreType::LOG:
-		// expected fields: gid, timestamp, status
-		if(empty($data->gid) || empty($data->timestamp) || empty($data->status)) {
+		// expected fields: medication_id, timestamp, status
+		if(empty($data->medication_id) || empty($data->timestamp) || empty($data->status)) {
 			
 			$result['error'] = 'Missing data!';
 			break 2;
 		}
 
-		// TODO: check validity
+		/*
+		 * medication_id should be numeric TODO: and exist
+		 * timestamp should be numeric
+		 * status should be numeric
+		 */
+		if(!is_numeric($data->medication_id) || !is_numeric($data->timestamp) || !is_numeric($data->status)) {
+			$result['error'] = 'Invalid data!';
+			break 2;
+		}
 
 		// store
-		$query = sprintf('INSERT INTO `log` (`medication_id`, `timestamp`, `status`) VALUES (%u, FROM_UNIXTIME(%u), %u)', $data->gid, $data->timestamp, $data->status);
+		$query = sprintf('INSERT INTO `log` (`medication_id`, `timestamp`, `status`) VALUES (%u, FROM_UNIXTIME(%u), %u)', $data->medication_id, $data->timestamp, $data->status);
 		if(mysql_query($query, $mysql) == FALSE) {
 			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
 			break 2;
