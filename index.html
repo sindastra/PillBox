@@ -2,8 +2,100 @@
 <html>
 	<head>
 		<title>PillBox</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 	</head>
 	<body>
-		
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand"><i class="fa fa-fw fa-heart-o text-danger"></i>PillBox!</a>
+                </div>
+                <div class="navbar-form navbar-right">
+                    <button class="btn btn-success" data-toggle="modal" data-target="#loginModal">Sign in</button>
+                </di
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-6">
+                    <div class="jumbotron text-center">
+                        <h1><i style="font-size:5em;color:#f56" class="fa fa-heart"></i></h1>
+                        <h2>Welcome to PillBox</h2>
+                        An easy and safe way to manage your medications.
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="well">
+                    <form id="signup" class="form-horizontal" method="post" action="signup.php">
+                        <fieldset>
+                            <legend>Sign up today, it's free!</legend>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-fw fa-user"></i></span>
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Username">
+                            </div>
+                            <br />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></span>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="E-mail">
+                            </div>
+                            <br />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-fw fa-key"></i></span>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Password">
+                            </div>
+                            <br />
+                            <input type="submit" class="btn btn-info" value="Sign up!" id="submitsignup" onclick="return false;">
+                        </fieldset>         
+                    </form>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading"><strong>Important Hackathon info!</strong></div>
+                        <div class="panel-body">
+                            <p>A demo account has been created for you.<br />
+                            Please just click on "Sign in" on the top right.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+            <hr>
+           <footer><small>&copy; 2016 PillBox</small></footer>
+        </div>
+        <!-- MODAL -->
+        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelby="test">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Sign in</h4>
+                    </div>
+                    <form id="signinform" method="post" action="signin.php">
+                        <div class="modal-body">            
+                            <div class="form-group input-group">
+                                <span class="input-group-addon"><i class="fa fa-fw fa-user"></i></span>
+                                <input class="form-control" name="username" id="signinusername" type="text" placeholder="Username or E-mail">
+                            </div>
+                            <div class="form-group input-group">
+                                <span class="input-group-addon"><i class="fa fa-fw fa-key"></i></span>
+                                <input class="form-control" name="password" id="signinpassword" type="password" placeholder="Password">
+                            </div>
+                            Demo username: Demo<br/>
+                            Demo password: Demo
+                        </div>
+                        <div class="modal-footer">
+                        <button class="btn btn-success" type="submit" id="submitsignin" onclick="return false;">Sign in!</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- MODAL -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="js/index.js"></script>
 	</body>
 </html>
