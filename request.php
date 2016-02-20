@@ -18,24 +18,29 @@
  
 /**
  * Accepts JSON only
- *
+ * 
  * use POST data in field called "json"
- *
+ * 
  * Format:
  * { type = TYPE, arguments .... }
  * valid types are:
- *
- * LOG: retrieves log for a medication
- * TODO: for all medications?
+ * 
+ * MEDICATIONS_GET: get all medications of current user
+ * takes no parameters
+ * 
+ * MEDICATION_LOG_GET: gets the medication log for all, or a given medication; in selected timespan
+ * 
  * parameters:
- * medication_id
- * after_time [UNIXTIME] (optional, defaults to 1970)
- * before_time [UNIXTIME] (optional, defaults to NOW)
- * TODO
+ * medication_id : if zero, match *all* medications
+ * start : if zero, matches from beginning of time, else UNIXTIME
+ * end : if zero, matches till end of time, else UNIXTIME
+ * 
+ * returns 2 fields: data [array] and error [string] as json
  */
 
 abstract class RequestType {
-	const LOG = 0;
+	const MEDICATIONS_GET = 0;
+	const MEDICATION_LOG_GET = 1;
 }
 
 include "functions.php";
@@ -72,8 +77,63 @@ if($data == NULL) {
 
 // execute
 switch($data->type) {
-	case RequestType::LOG:
-		$result['error'] = 'Not implemented!';
+	case RequestType::MEDICATIONS_GET:
+		// load all medication entries
+		$query = sprintf('SELECT `id`, `name`, `active_agent`, `dosage_package`, `dosage_package_unit`, `dosage_to_take`, `dosage_to_take_unit`, `colour`, `shape`, `food_instructions`, `indication`, `minimum_spacing`, `minimum_spacing_unit`, `maximum_dosage`, `maximum_dosage_unit`, `schedule`, `note`, `time` FROM `medications` WHERE `user_id`=%u', $_SESSION['userid']);
+		$r = mysql_query($query, $mysql);
+		if($r == FALSE) {
+			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+			break;
+		}
+
+		// return array of schedules
+		$count = mysql_num_rows($r);
+		for($i = 0; $i < $count; $i++) {
+			$row = mysql_fetch_assoc($r);
+			$result['data'][] = $row;
+		}
+
+		// Done
+		break;
+	case RequestType::MEDICATION_LOG_GET:
+		// expected input data: medication_id, start, end
+		if(!is_numeric($data->$medication_id) || !is_numeric($data->start) || !is_numeric($data->end)) {
+			$result['error'] = 'Invalid data!';
+			break;
+		}
+
+		// This is a complicated query, so make 4 of them!
+		// is medication ID given?
+		if($data->medication_id > 0) {
+			// is end-time given?
+			if($data->end > 0) {
+				$query = sprintf('SELECT `id`, `quantity`, `time_taken`, `status`, `note`, `time` FROM `medication_log` WHERE `medication_id`=%u AND `time_taken` > FROM_UNIXTIME(%u) AND `time_taken` < FROM_UNIXTIME(%u)', $data->medication_id, $data->start, $data->end);
+			} else {
+				$query = sprintf('SELECT `id`, `quantity`, `time_taken`, `status`, `note`, `time` FROM `medication_log` WHERE `medication_id`=%u AND `time_taken` > FROM_UNIXTIME(%u)', $data->medication_id, $data->start);
+			}
+		} else {
+			// is end-time given?
+			if($data->end > 0) {
+				$query = sprintf('SELECT l.`id`, l.`quantity`, l.`time_taken`, l.`status`, l.`note`, l.`time`, m.`id` AS medication_id FROM `medication_log` l LEFT JOIN `medications` m ON (l.`medication_id` = m.`id`) WHERE m.`user_id`=%u AND `time_taken` > FROM_UNIXTIME(%u) AND `time_taken` < FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->medication_id, $data->start, $data->end);
+			} else {
+				$query = sprintf('SELECT l.`id`, l.`quantity`, l.`time_taken`, l.`status`, l.`note`, l.`time`, m.`id` AS medication_id FROM `medication_log` l LEFT JOIN `medications` m ON (l.`medication_id` = m.`id`) WHERE m.`user_id`=%u AND `time_taken` > FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start);
+			}
+		}
+		// fetch data
+		$r = mysql_query($query, $mysql);
+		if($r == FALSE) {
+			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+			break;
+		}
+
+		// return all data as is
+		$count = mysql_num_rows($r);
+		for($i = 0; $i < $count; $i++) {
+			$row = mysql_fetch_assoc($r);
+			$result['data'][] = $row;
+		}
+
+		// Done
 		break;
 	default:
 		$result['error'] = 'Invalid type!';
