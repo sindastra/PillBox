@@ -102,5 +102,11 @@ if($count != 1) {
 	exit(0);
 }
 
+// log-in user right now
+$_SESSION['userid'] = $id;
+$_SESSION['username'] = $username;
+
+
+
 // return success
 echo SignupResult::SUCCESS;

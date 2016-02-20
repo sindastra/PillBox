@@ -37,7 +37,8 @@ init_session() {
 function is_logged_in() {
 	// TODO make this much better
 	// for now, just check if a username is set
-	return array_key_exists("username", $_SESSION) && !empty($_SESSION['username']);
+	return array_key_exists("username", $_SESSION) && !empty($_SESSION['username'])
+	    && array_key_exists("userid", $_SESSION) && !empty($_SESSION['userid']);
 }
 
 /**
