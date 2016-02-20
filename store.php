@@ -18,14 +18,27 @@
 
 /**
  * Accepts JSON only!
- *
+ * 
  * use POST data in field called "json"
- *
+ * 
  * Format:
- * { type = "log_medication", medication_id = [GID], timestamp = [UNIXTIME], status = [INT] }
- * { type = "add_medication", TODO }
- * { type = "add_schedule????", TODO }
+ * { type = "log_medication", parameters ..... }
+ * 
+ * Valid types are:
+ * MEDICATION_ADD: add new medication information
+ * parameters:
  * TODO
+ * 
+ * MEDICATION_LOG: log taking or not taking medication
+ * parameters:
+ * medication_id
+ * quantity
+ * timestamp (when taken)
+ * status
+ * note
+ *
+ * returns: log entry id
+ * 
  * There will be a reply with an ID and an error string
  * non-zero ID means success, and error will be empty
  * { id = 0, error = "abcdef" }
@@ -33,23 +46,22 @@
 
 // define constants
 abstract class StoreType {
-	const LOG = 1;
-	const MED = 2;
+	const MEDICATION_ADD = 1;
+	const MEDICATION_LOG = 2;
 }
 
 abstract class LogEntryStatus {
 	const AUTO = 0;
-	const TAKEN = 1;
-	const SKIPPED = 2;
+	const SKIPPED = 1;
 }
+
+include "functions.php";
 
 init_session();
 
 // include functions
 include "include/cmdline_to_postandget_hack.inc";
 include "include/mysql_open_database.inc";
-
-include "functions.php";
 
 // initialize a dummy failed result
 $result = array('id' => 0, 'error' => '');
@@ -78,45 +90,43 @@ if($data == NULL) {
 
 // execute
 switch($data->type) {
-	case StoreType::LOG:
-		// expected fields: medication_id, timestamp, status
-		if(empty($data->medication_id) || empty($data->timestamp) || empty($data->status)) {
-			
+	case StoreType::MEDICATION_LOG:
+		// expected fields: medication_id, quantity, timestamp, status, note (may be empty)
+		if(!isset($data->medication_id) || !isset($data->quantity) || !isset($data->timestamp) || !isset($data->status) || !isset($data->note)) {
 			$result['error'] = 'Missing data!';
-			break 2;
+			break;
 		}
 
 		/*
 		 * medication_id should be numeric TODO: and exist
+		 * quantity
 		 * timestamp should be numeric
 		 * status should be numeric
+		 * note can be any string
 		 */
-		if(!is_numeric($data->medication_id) || !is_numeric($data->timestamp) || !is_numeric($data->status)) {
+		if(!is_numeric($data->medication_id) || !is_numeric($data->quantity) || !is_numeric($data->timestamp) || !is_numeric($data->status)) {
 			$result['error'] = 'Invalid data!';
-			break 2;
+			break;
 		}
 
 		// store
-		$query = sprintf('INSERT INTO `log` (`medication_id`, `timestamp`, `status`) VALUES (%u, FROM_UNIXTIME(%u), %u)', $data->medication_id, $data->timestamp, $data->status);
+		$query = sprintf('INSERT INTO `medication_log` (`medication_id`, `quantity`, `time_taken`, `status`, `note`, `time`) VALUES (%u, %u, FROM_UNIXTIME(%u), %u, "%s", NOW())', $data->medication_id, $data->quantity, $data->timestamp, $data->status, $data->note);
 		if(mysql_query($query, $mysql) == FALSE) {
 			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
-			break 2;
+			break;
 		}
 
 		// get ID of new log Log entry
 		$id = mysql_insert_id($mysql);
 		if($id == FALSE || $id == 0) {
 			$result['error'] = "An unexpected error occured!";
-			break 2;
+			break;
 		}
 
 		// return ID as proof of success
 		$result['id'] = $id;
 		break;
-	case StoreType::MED:
-		$result['error'] = 'Not implemented!';
-		break;
-	default;
+	default:
 		$result['error'] = 'Invalid type!';
 		break;
 }
