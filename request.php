@@ -38,12 +38,12 @@ abstract class RequestType {
 	const LOG = 0;
 }
 
+include "functions.php";
+
 init_session();
 
 include "include/cmdline_to_postandget_hack.inc";
 include "include/mysql_open_database.inc";
-
-include "functions.php";
 
 // initialize a dummy failed result
 $result = array('data' => array(), 'error' => '');

@@ -20,7 +20,7 @@
  * Login-related functions
  */
 
-init_session() {
+function init_session() {
 	// start new, or restore existing session
 	session_start();
 
@@ -29,7 +29,7 @@ init_session() {
 	   || empty($_SESSION["username"]) ) {
 		// if anything is missing here, clear the session, just to be safe.
 		session_destroy();
-		unset $_SESSION;
+		unset($_SESSION);
 		session_start();
 	}
 }

@@ -34,12 +34,13 @@ abstract class SignupResult {
 	const EMAIL_IN_USE = 4;
 }
 
+include "functions.php";
+
 init_session();
 
 include "include/mysql_open_database.inc";
 include "include/cmdline_to_postandget_hack.inc";
 
-include "functions.php";
 
 // check if sufficient data was provided
 if( !array_key_exists('username', $_POST) || !array_key_exists('password', $_POST) || !array_key_exists('email', $_POST)

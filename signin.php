@@ -30,6 +30,8 @@ abstract class LoginResult {
 	const WRONG_PASSWORD = 4; // TODO: this could be used by an attacker
 }
 
+include "functions.php";
+
 init_session();
 
 include "include/mysql_open_database.inc";
@@ -62,7 +64,7 @@ list($id, $username, $password, $email, $salt, $time) = $r;
 
 // check given password with hashed one from database
 // TODO
-if(!check_password($password), $_POST['password'], $salt) {
+if(!check_password($password, $_POST['password'], $salt)) {
 	echo LoginResult::INVALID_USERNAME;
 	exit(0);
 }
