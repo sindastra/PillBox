@@ -43,7 +43,7 @@ abstract class LogEntryStatus {
 }
 
 // start new, or restore existing session
-//session_start();
+session_start();
 
 // include functions
 include "include/cmdline_to_postandget_hack.inc";
@@ -63,7 +63,7 @@ if(!is_logged_in()) {
 
 // check if data was passed
 if(!array_key_exists('json', $_POST)) {
-	$result['error'] = 'Please append data!';
+	$result['error'] = 'Please append request data!';
 	echo json_encode($result);
 	exit(0);
 }
@@ -114,6 +114,7 @@ switch($data->type) {
 		$result['id'] = $id;
 		break;
 	case StoreType::MED:
+		$result['error'] = 'Not implemented!';
 		break;
 	default;
 		$result['error'] = 'Invalid type!';
