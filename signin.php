@@ -61,8 +61,12 @@ if($r == FALSE) {
 }
 list($id, $username, $password, $email, $salt, $time) = $r;
 
-// check password
+// check given password with hashed one from database
 // TODO
+if(!check_password($password), $_POST['password'], $salt) {
+	echo LoginResult::INVALID_USERNAME;
+	exit(0);
+}
 
 // store log-in status in session
 $_SESSION['userid'] = $id;
