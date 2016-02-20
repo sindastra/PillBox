@@ -68,6 +68,15 @@
  * value
  * timestamp
  * 
+ * SCHEDULE_ADD: add another schedule for an existing medication
+ * 
+ * medication_id
+ * type
+ * start
+ * times
+ * end
+ * interval
+ * 
  * There will be a reply with an ID and an error string
  * non-zero ID means success, and error will be empty
  * { id = 0, error = "abcdef" }
@@ -79,6 +88,7 @@ abstract class StoreType {
 	const MEDICATION_LOG = 2;
 	const MEASUREMENT_ADD = 3;
 	const MEASUREMENT_LOG = 4;
+	const SCHEDULE_ADD = 5;
 }
 
 abstract class LogEntryStatus {
@@ -249,6 +259,134 @@ switch($data->type) {
 
 		// return ID as proof of success
 		$result['id'] = $id;
+		break;
+	case StoreType::SCHEDULE_ADD:
+		// expected input data: medication_id, type, start, times, end, interval
+		// first check data
+		if( !is_numeric($data->medication_id) || !is_numeric($data->type) || !is_numeric($data->start) || !is_numeric($data->times) || !is_numeric($data->end) || !is_numeric($data->interval) ) {
+			$result['error'] = 'Invalid data!';
+			break;
+		}
+
+		// storing is non-trivial because there might already be another schedule for this medication already
+		// look for such one(s) first
+		$query = sprintf('SELECT `schedule_id` FROM `medications` WHERE `id`=%u', $data->medication_id);
+		$r = mysql_query($query, $mysql);
+		if($r == FALSE) {
+			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+			break;
+		}
+
+		// see if there was any result
+		$count = mysql_num_rows($r);
+		if($count == FALSE) {
+			$result['error'] = "An unexpected error occured!";
+			break;
+		}
+		if($count == 0) {
+			$result['error'] = "An unexpected error occured!";
+			break;
+		}
+
+		// fetch result
+		$r = mysql_fetch_row($r);
+		if($r == FALSE) {
+			$result['error'] = "An unexpected error occured!";
+			break;
+		}
+		list($schedule_id) = $r;
+
+		// is there a schedule linked to this medication?
+		if(is_numeric($schedule_id) && !empty($schedule_id)) {
+			// This is the complicated case
+			// Again there are 2 possibilities:
+			// a) There is exactly 1 schedule for this medication, and it does not yet have a group ID
+			// b) There are multiple schedules for this medication linked by a common group ID
+
+			// load first schedules group ID
+			$query = sprintf('SELECT `group_id` FROM `schedule` WHERE `id`=%u', $schedule_id);
+			$r = mysql_query($query, $mysql);
+			if($r == FALSE) {
+				$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+				break;
+			}
+			$r = mysql_fetch_row($r);
+			if($r == FALSE) {
+				$result['error'] = "An unexpected error occured!";
+				break;
+			}
+			list($group_id) = $r;
+
+			// is this a valid group_id? (!=0, !=NULL)
+			if(is_numeric($group_id) && !empty($group_id)) {
+				// This is rather easy, a group id exists already
+				// so add another schedule with same group ID
+				$query = sprintf('INSERT INTO `schedule` (`group_id`, `type`, `schedule_start`, `times`, `schedule_end`, `interval`,`time`) VALUES (%u, %u, FROM_UNIXTIME(%u), %u, FROM_UNIXTIME(%u), %u, NOW())', $group_id, $data->type, $data->start, $data->times, $data->end, $data->interval);
+				if(mysql_query($query, $mysql) == FALSE) {
+					$result['error'] = "An unexpected error occured!";
+					break;
+				}
+				$id = mysql_insert_id($mysql);
+				if($id == FALSE || $id == 0) {
+					$result['error'] = "An unexpected error occured!";
+					break;
+				}
+
+				// return ID as proof of success
+				$result['id'] = $id;
+			} else {
+				// This is the hardest part:
+				// First, create a group ID
+				// for ease of use, take first schedules ID
+				$group_id = $schedule_id;
+
+				// set group_id on existing schedule
+				$query = sprintf('UPDATE `schedule` SET `group_id`=%u WHERE `id`=%u', $group_id, $schedule_id);
+				if(mysql_query($query, $mysql) == FALSE) {
+					$result['error'] = "An unexpected error occured!";
+					break;
+				}
+
+				// add new schedule
+				$query = sprintf('INSERT INTO `schedule` (`group_id`, `type`, `schedule_start`, `times`, `schedule_end`, `interval`,`time`) VALUES (%u, %u, FROM_UNIXTIME(%u), %u, FROM_UNIXTIME(%u), %u, NOW())', $group_id, $data->type, $data->start, $data->times, $data->end, $data->interval);
+				if(mysql_query($query, $mysql) == FALSE) {
+					$result['error'] = "An unexpected error occured!";
+					break;
+				}
+				$id = mysql_insert_id($mysql);
+				if($id == FALSE || $id == 0) {
+					$result['error'] = "An unexpected error occured!";
+					break;
+				}
+
+				// return ID as proof of success
+				$result['id'] = $id;
+			}
+			
+		} else {
+			// This is the easy case!
+			// just insert a new schedule, and link it.
+			$query = sprintf('INSERT INTO `schedule` (`group_id`, `type`, `schedule_start`, `times`, `schedule_end`, `interval`,`time`) VALUES (%u, %u, FROM_UNIXTIME(%u), %u, FROM_UNIXTIME(%u), %u, NOW())', 0, $data->type, $data->start, $data->times, $data->end, $data->interval);
+			if(mysql_query($query, $mysql) == FALSE) {
+				$result['error'] = "An unexpected error occured!";
+				break;
+			}
+			$id = mysql_insert_id($mysql);
+			if($id == FALSE || $id == 0) {
+				$result['error'] = "An unexpected error occured!";
+				break;
+			}
+
+			// link the new schedule to the medication
+			$query = sprintf('UPDATE `medications` SET `schedule_id`=%u, `schedule`=1 WHERE `id`=%u', $id, $data->medication_id);
+			if(mysql_query($query, $mysql) == FALSE) {
+				$result['error'] = "An unexpected error occured!";
+				break;
+			}
+
+			// return ID as proof of success
+			$result['id'] = $id;
+		}
 		break;
 	default:
 		$result['error'] = 'Invalid type!';
