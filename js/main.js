@@ -13,9 +13,8 @@ function get_all_medications()
 function create_medication(name,dosage_package,dosage_package_unit,
                             active_agent,dosage_to_take,dosage_to_take_unit,
                            colour,shape,food_instructions,indication,
-                           minimum_spacing,minimum_spacing,
-                            minimum_spacing_unit,maximum_dosage,
-                            maximum_dosage_unit,note)
+                           minimum_spacing,minimum_spacing_unit,
+                            maximum_dosage,maximum_dosage_unit,note)
 {
     var medication_data = {
         "type":"1",
