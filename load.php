@@ -181,21 +181,10 @@ switch($data->_type) {
 
 		// This is a complicated query, so make 4 of them!
 		// is measurement ID given?
-		if($data->measurement_id > 0) {
-			// is end-time given?
-			if($data->end > 0) {
-				$query = sprintf('SELECT `id`, `measurement_id`, `measurement` AS `value`, UNIX_TIMESTAMP(`time_measured`) AS `timestamp` FROM `measurement_log` WHERE `measurement_id` = %u AND `time_measured` > FROM_UNIXTIME(%u)', $data->measurement_id, $data->start);
-			} else {
-				$query = sprintf('SELECT `id`, `measurement_id`, `measurement`, UNIX_TIMESTAMP(`time_measured`) AS `time_measured` FROM `measurement_log` WHERE `measurement_id` = %u AND `time_measured` > FROM_UNIXTIME(%u) AND `time_easured` < FROM_UNIXTIME(%u)', $data->measurement_id, $data->start, $data->end);
-			}
-		} else {
-			// is end-time given?
-			if($data->end > 0) {
-				$query = sprintf('SELECT l.`id`, l.`measurement_id`, l.`measurement` AS `value`, UNIX_TIMESTAMP(l.`time_measured`) AS `timestamp` FROM `measurement_log` l LEFT JOIN `measurements` m ON (l.`measurement_id` = m.`id`) WHERE m.`user_id`=%u AND l.`time_measured` > FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start);
-			} else {
-				$query = sprintf('SELECT l.`id`, l.`measurement_id`, l.`measurement` AS `value`, UNIX_TIMESTAMP(l.`time_measured`) AS `timestamp` FROM `measurement_log` l LEFT JOIN `measurements` m ON (l.`measurement_id` = m.`id`) WHERE m.`user_id`=%u AND l.`time_measured` > FROM_UNIXTIME(%u) AND `time_easured` < FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start, $data->end);
-			}
-		}
+		if($data->measurement_id > 0)
+			$query = sprintf('SELECT `id`, `measurement_id`, `measurement` AS `value`, UNIX_TIMESTAMP(`time_measured`) AS `timestamp` FROM `measurement_log` WHERE `measurement_id` = %u', $data->measurement_id);
+		else
+			$query = sprintf('SELECT l.`id`, l.`measurement_id`, l.`measurement` AS `value`, UNIX_TIMESTAMP(l.`time_measured`) AS `timestamp` FROM `measurement_log` l LEFT JOIN `measurements` m ON (l.`measurement_id` = m.`id`) WHERE m.`user_id`=%u', $_SESSION['userid']);
 		// fetch data
 		$r = mysql_query($query, $mysql);
 		if($r == FALSE) {
@@ -203,11 +192,14 @@ switch($data->_type) {
 			break;
 		}
 
-		// return all data as is
+		// go through each result
 		$count = mysql_num_rows($r);
 		for($i = 0; $i < $count; $i++) {
 			$row = mysql_fetch_assoc($r);
-			$result['data'][] = $row;
+
+			// filter by given timespan
+			if($row['timestamp'] > $data->start && ($row['timestamp'] < $data->end || $data->end == 0))
+				$result['data'][] = $row;
 		}
 
 		// Done
@@ -224,14 +216,10 @@ switch($data->_type) {
 		// 2) get any that are in a group with either of those
 
 		// 1)
-		if($data->medication_id > 0 && $data->end > 0)
-			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, UNIX_TIMESTAMP(s.`schedule_start`) AS start, s.`times`, UNIX_TIMESTAMP(s.`schedule_end`) AS end, s.`interval`, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`id`=%u AND s.`schedule_start` > FROM_UNIXTIME(%u) AND (s.`schedule_end` < FROM_UNIXTIME(%u) || UNIX_TIMESTAMP(s.`schedule_end`)=0)', $data->medication_id, $data->start, $data->end);
-		else if($data->medication_id > 0 && $data->end == 0)
-			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, UNIX_TIMESTAMP(s.`schedule_start`) AS start, s.`times`, UNIX_TIMESTAMP(s.`schedule_end`) AS end, s.`interval`, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`id`=%u AND s.`schedule_start` > FROM_UNIXTIME(%u)', $data->medication_id, $data->start);
-		else if($data->medication_id == 0 && $data->end > 0)
-			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, UNIX_TIMESTAMP(s.`schedule_start`) AS start, s.`times`, UNIX_TIMESTAMP(s.`schedule_end`) AS end, s.`interval`, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`user_id`=%u AND s.`schedule_start` > FROM_UNIXTIME(%u) AND (s.`schedule_end` < FROM_UNIXTIME(%u) || UNIX_TIMESTAMP(s.`schedule_end`)=0)', $_SESSION['userid'], $data->start, $data->end);
-		else if($data->medication_id == 0 && $data->end == 0)
-			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, UNIX_TIMESTAMP(s.`schedule_start`) AS start, s.`times`, UNIX_TIMESTAMP(s.`schedule_end`) AS end, s.`interval`, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`user_id`=%u AND s.`schedule_start` > FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start);
+		if($data->medication_id > 0)
+			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, UNIX_TIMESTAMP(s.`schedule_start`) AS start, s.`times`, UNIX_TIMESTAMP(s.`schedule_end`) AS end, s.`interval`, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`id`=%u', $data->medication_id);
+		else
+			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, UNIX_TIMESTAMP(s.`schedule_start`) AS start, s.`times`, UNIX_TIMESTAMP(s.`schedule_end`) AS end, s.`interval`, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`user_id`=%u', $_SESSION['userid']);
 		$r = mysql_query($query, $mysql);
 		if($r == FALSE) {
 			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
@@ -242,7 +230,10 @@ switch($data->_type) {
 			$row = mysql_fetch_assoc($r);
 			$group_id = $row['group_id'];
 			unset($row['group_id']);
-			$result['data'][] = $row;
+
+			// filter by given timespan
+			if($row['start'] > $data->start && ($row['end'] < $data->end || $data->end == 0 || $row['end'] == 0))
+				$result['data'][] = $row;
 
 			// 2)
 			if(is_numeric($group_id) && !empty($group_id)) {
@@ -259,7 +250,10 @@ switch($data->_type) {
 				$count = mysql_num_rows($r);
 				for($i = 0; $i < $count; $i++) {
 					$row = mysql_fetch_assoc($r);
-					$result['data'][] = $row;
+
+					// filter by given timespan
+					if($row['start'] > $data->start && ($row['end'] < $data->end || $data->end == 0 || $row['end'] == 0))
+						$result['data'][] = $row;
 				}
 			}
 		}
