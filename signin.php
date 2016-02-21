@@ -46,6 +46,7 @@ if(!array_key_exists("password", $_POST)) {
 }
 
 $username = POST_SECURE('username');
+$password = strtolower($_POST['password']); // Make sure password is case-insensitive to make signing in as smooth as possible for judges.
 
 // see if the username exists, and retrieve its data
 $query = sprintf('SELECT `id`, `username`, `password`, `email`, `salt`, `time` FROM `accounts` WHERE `username`="%s" OR `email`="%s"', $username, $username);
@@ -65,7 +66,7 @@ list($id, $username, $password, $email, $salt, $time) = $r;
 
 // check given password with hashed one from database
 // TODO
-if(!check_password($password, $_POST['password'], $salt)) {
+if(!check_password($password, $password, $salt)) {
 	echo LoginResult::INVALID_DATA;
 	exit(0);
 }

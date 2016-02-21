@@ -43,6 +43,7 @@ include "include/cmdline_to_postandget_hack.inc";
 
 $username = POST_SECURE('username');
 $email    = POST_SECURE('email');
+$password = strtolower($_POST['password']); // Make sure password is case-insensitive to make signing in as smooth as possible for judges.
 
 // check if sufficient data was provided
 if( !array_key_exists('username', $_POST) || !array_key_exists('password', $_POST) || !array_key_exists('email', $_POST)
@@ -86,7 +87,7 @@ if($count != 0) {
 
 // hsh password
 $salt = generate_salt();
-$password = hash_password($_POST['password'], $salt);
+$password = hash_password($password, $salt);
 
 // create accoount
 $query = sprintf('INSERT INTO `accounts` (`username`, `password`, `email`, `salt`, `time`) VALUES("%s", "%s", "%s", "%s", NOW())', $username, $password, $email, $salt);
