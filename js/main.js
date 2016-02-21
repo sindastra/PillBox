@@ -1,8 +1,44 @@
-var requestURL = "request.php";
+var requestURL = "load.php";
 var storeURL   = "store.php";
+var deleteURL  = "delete.php";
+var updateURL  = "update.php";
+
+var medications;
+var medicationsLoadSuccess = false;
+var medicationsLoadErrorCount = 0;
+var medicationsLoadErrorThreshhold = 15;
 
 var clock = document.getElementById("clock");
 var date  = document.getElementById("date");
+
+var medicationTable = document.getElementById("medicationTable");
+
+function generate_alertbox_error(text)
+{
+    var alertBox = document.createElement("div");
+    alertBox.className += "alert alert-danger";
+    alertBox.innerHTML = text;
+    
+    return alertBox;
+}
+
+function clear_medications_table()
+{
+    medicationTable.innerHTML = "";
+}
+
+function load_medications_into_table(data)
+{
+    data.forEach(function(entry){
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        
+        td.innerHTML = entry["name"] +" "+ entry["dosage_package"] +" "+ entry["dosage_package_unit"];
+        
+        tr.appendChild(td);
+        medicationTable.appendChild(tr);
+    });
+}
 
 var months = [
     "Jan", "Feb", "Mar", "Apr",
@@ -24,7 +60,17 @@ function get_all_medications()
         data["data"].forEach(function(entry){
             console.log(entry["name"]);
         });
-    }, "json");
+        medications = data["data"];
+    }, "json").done(function(){
+        medicationsLoadSuccess = true;
+        medicationsLoadErrorCount = 0;
+        console.log("Medication load success.")
+    }).fail(function(){
+        medicationsLoadSuccess = false;
+        medicationsLoadErrorCount++;
+        console.log("Medication load failed.");
+        console.log("Error count: "+medicationsLoadErrorCount);
+    });
 }
 
 function create_medication(name,dosage_package,dosage_package_unit,
@@ -73,3 +119,22 @@ setInterval(function(){
     updateClock();
     updateDate();
 }, 100);
+
+setInterval(function(){
+    get_all_medications();
+    
+    if( medicationsLoadSuccess )
+    {
+        clear_medications_table();
+        load_medications_into_table(medications);
+    }
+    else
+    {
+        if(medicationsLoadErrorCount > medicationsLoadErrorThreshhold)
+        {
+            console.log("Error count above threshold.");
+            console.log("Outputting error to user.")
+            medicationTable.innerHTML = "We are currenlty having issues to fetch the medications... retrying...";
+        }
+    } 
+}, 3000);
