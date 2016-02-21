@@ -22,7 +22,7 @@
  * use POST data in field called "json"
  * 
  * Format:
- * { type = TYPE, arguments .... }
+ * { _type = TYPE, arguments .... }
  * valid types are:
  * 
  * MEDICATIONS_GET: get all medications of current user
@@ -96,7 +96,7 @@ if($data == NULL) {
 }
 
 // execute
-switch($data->type) {
+switch($data->_type) {
 	case RequestType::MEDICATIONS_GET:
 		// load all medication entries
 		$query = sprintf('SELECT `id`, `name`, `active_agent`, `dosage_package`, `dosage_package_unit`, `dosage_to_take`, `dosage_to_take_unit`, `colour`, `shape`, `food_instructions`, `indication`, `minimum_spacing`, `minimum_spacing_unit`, `maximum_dosage`, `maximum_dosage_unit`, `schedule`, `note`, UNIX_TIMESTAMP(`time`) AS `time` FROM `medications` WHERE `user_id`=%u', $_SESSION['userid']);

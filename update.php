@@ -22,7 +22,7 @@
  * use POST data in field called "json"
  * 
  * Format:
- * { type = TYPE, arguments .... }
+ * { _type = TYPE, arguments .... }
  * valid types are:
  * 
  * MEDICATION: add new medication information
@@ -123,7 +123,7 @@ if($data == NULL) {
 }
 
 // execute
-switch($data->type) {
+switch($data->_type) {
 	default:
 		$result['error'] = 'Invalid type!';
 		break;

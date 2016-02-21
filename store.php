@@ -22,7 +22,7 @@
  * use POST data in field called "json"
  * 
  * Format:
- * { type = "log_medication", parameters ..... }
+ * { _type = "log_medication", parameters ..... }
  * 
  * Valid types are:
  * MEDICATION_ADD: add new medication information
@@ -130,7 +130,7 @@ if($data == NULL) {
 }
 
 // execute
-switch($data->type) {
+switch($data->_type) {
 	case StoreType::MEDICATION_ADD:
 		/*
 		 * expected fields: name, active_agent, dosage_package, dosage_package_unit, dosage_to_take, dosage_to_take_unit, colour

@@ -21,7 +21,7 @@
  * use POST data in field called "json"
  * 
  * Format:
- * { type = TYPE, id = ID }
+ * { _type = TYPE, id = ID }
  * valid types are defined below
  * 
  * returned is a pair of { status = STATUS, error = MESSAGE }, encoded in json
@@ -73,7 +73,7 @@ if($data == NULL) {
 }
 
 // execute
-switch($data->type) {
+switch($data->_type) {
 	default:
 		$result['error'] = 'Invalid type!';
 		break;
