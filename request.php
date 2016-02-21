@@ -213,7 +213,56 @@ switch($data->type) {
 		// Done
 		break;
 	case RequestType::SCHEDULE_GET:
-		
+		// expected input data: medication_id, start, end
+		if(!is_numeric($data->medication_id) || !is_numeric($data->start) || !is_numeric($data->end)) {
+			$result['error'] = 'Invalid or missing data!';
+			break;
+		}
+
+		// make it 2 steps:
+		// 1) get all schedules directly linked to a medication
+		// 2) get any that are in a group with either of those
+
+		// 1)
+		if($data->medication_id > 0 && $data->end > 0)
+			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, s.`schedule_start`, s.`times`, s.`schedule_end`, s.`interval`, s.`time`m, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`id`=%u AND s.`schedule_start` > FROM_UNIXTIME(%u) AND s.`schedule_end` < FROM_UNIXTIME(%u)', $data->medication_id, $data->start, $data->end);
+		else if($data->medication_id > 0 && $data->end == 0)
+			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, s.`schedule_start`, s.`times`, s.`schedule_end`, s.`interval`, s.`time`m, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`id`=%u AND s.`schedule_start` > FROM_UNIXTIME(%u)', $data->medication_id, $data->start);
+		else if($data->medication_id == 0 && $data->end > 0)
+			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, s.`schedule_start`, s.`times`, s.`schedule_end`, s.`interval`, s.`time`m, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`user_id`=%u AND s.`schedule_start` > FROM_UNIXTIME(%u) AND s.`schedule_end` < FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start, $data->end);
+		else if($data->medication_id == 0 && $data->end == 0)
+			$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, s.`schedule_start`, s.`times`, s.`schedule_end`, s.`interval`, s.`time`m, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE m.`user_id`=%u AND s.`schedule_start` > FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start);
+		$r = mysql_query($query, $mysql);
+		if($r == FALSE) {
+			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+			break;
+		}
+		$count = mysql_num_rows($r);
+		for($i = 0; $i < $count; $i++) {
+			$row = mysql_fetch_assoc($r);
+			$result['data'][] = $row;
+
+			// 2)
+			if(is_numeric($row['group_id']) && !empty($row['group_id'])) {
+				// get the other group members
+				if($data->end > 0)
+					$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, s.`schedule_start`, s.`times`, s.`schedule_end`, s.`interval`, s.`time`m, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE s.`group_id`=%u AND s.`id`!=%u AND s.`schedule_start` > FROM_UNIXTIME(%u) AND s.`schedule_end` < FROM_UNIXTIME(%u)', $row['group_id'], $row['id'], $data->start, $data->end);
+				else
+					$query = sprintf('SELECT s.`id`, s.`group_id`, s.`type`, s.`schedule_start`, s.`times`, s.`schedule_end`, s.`interval`, s.`time`m, m.`id` AS medication_id FROM `schedule` s LEFT JOIN `medications` m ON (s.`id` = m.`schedule_id`) WHERE s.`group_id`=%u AND s.`id`!=%u AND s.`schedule_start` > FROM_UNIXTIME(%u)', $row['group_id'], $row['id'], $data->start);
+				$r2 = mysql_query($query, $mysql);
+				if($r2 == FALSE) {
+					$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+					break;
+				}
+				$count = mysql_num_rows($r);
+				for($i = 0; $i < $count; $i++) {
+					$row = mysql_fetch_assoc($r);
+					$result['data'][] = $row;
+				}
+			}
+		}
+
+		// Done
 		break;
 	default:
 		$result['error'] = 'Invalid type!';
