@@ -81,7 +81,7 @@ if(!is_numeric($data->id) || $data->id <= 0) {
 
 // execute
 switch($data->_type) {
-	case MEASUREMENT:
+	case DeleteType::MEASUREMENT:
 		// delete entry
 		$query = sprintf('DELETE FROM `measurements` WHERE `id`=%u', $data->id);
 		if(mysql_query($query, $mysql) == FALSE) {
@@ -94,7 +94,7 @@ switch($data->_type) {
 		// Done
 		$result['status'] = DeleteResult::SUCCESS;
 		break;
-	case MEASUREMENT_LOG:
+	case DeleteType::MEASUREMENT_LOG:
 		// delete entry
 		$query = sprintf('DELETE FROM `measurement_log` WHERE `id`=%u', $data->id);
 		if(mysql_query($query, $mysql) == FALSE) {
@@ -105,7 +105,7 @@ switch($data->_type) {
 		// Done
 		$result['status'] = DeleteResult::SUCCESS;
 		break;
-	case MEDICATION:
+	case DeleteType::MEDICATION:
 		// delete entry
 		$query = sprintf('DELETE FROM `medications` WHERE `id`=%u', $data->id);
 		if(mysql_query($query, $mysql) == FALSE) {
@@ -117,7 +117,7 @@ switch($data->_type) {
 
 		// Done
 		break;
-	case MEDICATION_LOG:
+	case DeleteType::MEDICATION_LOG:
 		// delete entry
 		$query = sprintf('DELETE FROM `medication_log` WHERE `id`=%u', $data->id);
 		if(mysql_query($query, $mysql) == FALSE) {
@@ -128,7 +128,7 @@ switch($data->_type) {
 		// Done
 		$result['status'] = DeleteResult::SUCCESS;
 		break;
-	case SCHEDULE:
+	case DeleteType::SCHEDULE:
 		// Be careful! This might destroy the link in medications table
 		// So first, read out the group_id of this schedule
 		$query = sprintf('SELECT `group_id` FROM `schedule` WHERE `id`=%u', $data->id);
@@ -199,7 +199,8 @@ switch($data->_type) {
 				break;
 			}
 		}
-		$query = sprintf('DELETE FROM `schedule` WHERE `id`=%u', $data->id);
+
+		// Done
 		$result['status'] = DeleteResult::SUCCESS;
 		break;
 	default:
