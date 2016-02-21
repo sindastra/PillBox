@@ -35,7 +35,7 @@ function create_medication(name,dosage_package,dosage_package_unit,
         "note":note
     }
     
-    $.post(storeURL, {json:medication_data}, function(data){
+    $.post(storeURL, {json:JSON.stringify(medication_data)}, function(data){
         console.log(data);
     },"json");
 }
