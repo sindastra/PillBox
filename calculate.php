@@ -32,11 +32,11 @@
  * start [UNIXTIME] : if zero, matches from beginning of time
  * end [UNIXTIME] : if zero, matches till end of time
  * 
- * returns a list of:
+ * returns an array with these fields:
  * medication_id
  * schedule_id
  * time
- * TODO: status
+ * status
  */
 
 abstract class CalculateTypes {
@@ -53,6 +53,13 @@ abstract class ScheduleType {
 	const INTERVALS = 1;
 	const TIMES = 2;
 	const DAILY_FIXED_TIME = 3;
+}
+
+abstract class ScheduleStatus {
+	const UNKNOWN = 3;
+	const TAKEN = 0;
+	const SKIPPED = 1;
+	const MISSED = 2;
 }
 
 include "functions.php";
@@ -230,6 +237,37 @@ switch($data->_type) {
 					break 2;
 			}
 		}
+
+		// go through all of them once more and derive the status from the log
+		foreach($result['data'] as &$schedule) {
+			// set default status
+			$schedule['status'] = ScheduleStatus::UNKNOWN;
+
+			// see if there is a log entry for this medications scheduled time
+			$query = sprintf('SELECT `time_taken`, `status`, `note` FROM `medication_log` WHERE `medication_id`=%u AND `time_scheduled`=FROM_UNIXTIME(%u)', $schedule['medication_id'], $schedule['time']);
+			$r = mysql_query($query, $mysql);
+			if($r == FALSE) {
+				$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
+				break;
+			}
+			$count = mysql_num_rows($r);
+			if($count == 0) {
+				// So nothing. That means it must have been missed
+				$schedule['status'] = ScheduleStatus::MISSED;
+			} else {
+				$row = mysql_fetch_assoc($r);
+				if($row == FALSE) {
+					$result['error'] = "An unexpected error occured!";
+					break 2;
+				}
+				list($time_taken, $status, $note) = $row;
+				if($status == 0)
+					$schedule['status'] = ScheduleStatus::TAKEN;
+				else if($status == 1)
+					$schedule['status'] = ScheduleStatus::SKIPPED;
+			}
+			
+		} unset($schedule);
 
 		// Done
 		$result['status'] = CalculateResult::SUCCESS;
