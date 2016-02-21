@@ -52,6 +52,7 @@
  * timestamp (when taken)
  * status
  * note
+ * scheduled (when supposed to be taken)
  * 
  * returns: log entry id
  * 
@@ -171,7 +172,7 @@ switch($data->_type) {
 		break;
 	case StoreType::MEDICATION_LOG:
 		// expected fields: medication_id, quantity, timestamp, status, note (may be empty)
-		if(!isset($data->medication_id) || !isset($data->quantity) || !isset($data->timestamp) || !isset($data->status) || !isset($data->note)) {
+		if(!isset($data->medication_id) || !isset($data->quantity) || !isset($data->timestamp) || !isset($data->status) || !isset($data->note) || !isset($data->scheduled)) {
 			$result['error'] = 'Missing data!';
 			break;
 		}
@@ -183,13 +184,13 @@ switch($data->_type) {
 		 * status should be numeric
 		 * note can be any string
 		 */
-		if(!is_numeric($data->medication_id) || !is_numeric($data->quantity) || !is_numeric($data->timestamp) || !is_numeric($data->status)) {
+		if(!is_numeric($data->medication_id) || !is_numeric($data->quantity) || !is_numeric($data->timestamp) || !is_numeric($data->status) || !is_numeric($data->scheduled)) {
 			$result['error'] = 'Invalid data!';
 			break;
 		}
 
 		// store
-		$query = sprintf('INSERT INTO `medication_log` (`medication_id`, `quantity`, `time_taken`, `status`, `note`, `time`) VALUES (%u, %u, FROM_UNIXTIME(%u), %u, "%s", NOW())', $data->medication_id, $data->quantity, $data->timestamp, $data->status, $data->note);
+		$query = sprintf('INSERT INTO `medication_log` (`medication_id`, `quantity`, `time_taken`, `status`, `note`, `time_scheduled`, `time`) VALUES (%u, %u, FROM_UNIXTIME(%u), %u, "%s", FROM_UNIXTIME(%u), NOW())', $data->medication_id, $data->quantity, $data->timestamp, $data->status, $data->note, $data->scheduled);
 		if(mysql_query($query, $mysql) == FALSE) {
 			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
 			break;

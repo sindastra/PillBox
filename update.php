@@ -50,6 +50,7 @@
  * timestamp (when taken)
  * status
  * note
+ * scheduled (when supposed to be taken)
  * 
  * MEASUREMENT: add new measurement description/category
  * 
@@ -205,7 +206,7 @@ switch($data->_type) {
 		break;
 	case UpdateType::MEDICATION_LOG:
 		// expected fields: medication_id, quantity, timestamp, status, note (may be empty)
-		if(!isset($data->medication_id) || !isset($data->quantity) || !isset($data->timestamp) || !isset($data->status) || !isset($data->note)) {
+		if(!isset($data->medication_id) || !isset($data->quantity) || !isset($data->timestamp) || !isset($data->status) || !isset($data->note) || !isset($data->scheduled)) {
 			$result['error'] = 'Missing data!';
 			break;
 		}
@@ -217,13 +218,13 @@ switch($data->_type) {
 		 * status should be numeric
 		 * note can be any string
 		 */
-		if(!is_numeric($data->medication_id) || !is_numeric($data->quantity) || !is_numeric($data->timestamp) || !is_numeric($data->status)) {
+		if(!is_numeric($data->medication_id) || !is_numeric($data->quantity) || !is_numeric($data->timestamp) || !is_numeric($data->status) || !is_numeric($data->scheduled)) {
 			$result['error'] = 'Invalid data!';
 			break;
 		}
 
 		// update
-		$query = sprintf('UPDATE `medication_log` SET `medication_id`%u, `quantity`=%u, `time_taken`=FROM_UNIXTIME(%u), `status`=%u, `note`="%s", `time`=NOW() WHERE `id`=%u', $data->medication_id, $data->quantity, $data->timestamp, $data->status, $data->note, $data->id);
+		$query = sprintf('UPDATE `medication_log` SET `medication_id`%u, `quantity`=%u, `time_taken`=FROM_UNIXTIME(%u), `status`=%u, `note`="%s", `time_scheduled`=FROM_UNIXTIME(%u), `time`=NOW() WHERE `id`=%u', $data->medication_id, $data->quantity, $data->timestamp, $data->status, $data->note, $data->scheduled, $data->id);
 		if(mysql_query($query, $mysql) == FALSE) {
 			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
 			break;

@@ -127,16 +127,16 @@ switch($data->_type) {
 		if($data->medication_id > 0) {
 			// is end-time given?
 			if($data->end > 0) {
-				$query = sprintf('SELECT `id`, `medication_id`, `quantity`, UNIX_TIMESTAMP(`time_taken`) AS `timestamp`, `status`, `note` FROM `medication_log` WHERE `medication_id`=%u AND `time_taken` > FROM_UNIXTIME(%u) AND `time_taken` < FROM_UNIXTIME(%u)', $data->medication_id, $data->start, $data->end);
+				$query = sprintf('SELECT `id`, `medication_id`, `quantity`, UNIX_TIMESTAMP(`time_taken`) AS `timestamp`, `status`, `note`, UNIX_TIMESTAMP(`time_scheduled`) AS scheduled FROM `medication_log` WHERE `medication_id`=%u AND `time_taken` > FROM_UNIXTIME(%u) AND `time_taken` < FROM_UNIXTIME(%u)', $data->medication_id, $data->start, $data->end);
 			} else {
-				$query = sprintf('SELECT `id`, ´medication_id`, `quantity`, UNIX_TIMESTAMP(`time_taken`) AS `timestamp`, `status`, `note` FROM `medication_log` WHERE `medication_id`=%u AND `time_taken` > FROM_UNIXTIME(%u)', $data->medication_id, $data->start);
+				$query = sprintf('SELECT `id`, ´medication_id`, `quantity`, UNIX_TIMESTAMP(`time_taken`) AS `timestamp`, `status`, `note`, UNIX_TIMESTAMP(`time_scheduled`) AS scheduled FROM `medication_log` WHERE `medication_id`=%u AND `time_taken` > FROM_UNIXTIME(%u)', $data->medication_id, $data->start);
 			}
 		} else {
 			// is end-time given?
 			if($data->end > 0) {
-				$query = sprintf('SELECT l.`id`, l.`medication_id`, l.`quantity`, UNIX_TIMESTAMP(l.`time_taken`) AS `timestamp`, l.`status`, l.`note` FROM `medication_log` l LEFT JOIN `medications` m ON (l.`medication_id` = m.`id`) WHERE m.`user_id`=%u AND `time_taken` > FROM_UNIXTIME(%u) AND `time_taken` < FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->medication_id, $data->start, $data->end);
+				$query = sprintf('SELECT l.`id`, l.`medication_id`, l.`quantity`, UNIX_TIMESTAMP(l.`time_taken`) AS `timestamp`, l.`status`, l.`note`, UNIX_TIMESTAMP(l.`time_scheduled`) AS scheduled FROM `medication_log` l LEFT JOIN `medications` m ON (l.`medication_id` = m.`id`) WHERE m.`user_id`=%u AND `time_taken` > FROM_UNIXTIME(%u) AND `time_taken` < FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->medication_id, $data->start, $data->end);
 			} else {
-				$query = sprintf('SELECT l.`id`, l.`medication_id`, l.`quantity`, UNIX_TIMESTAMP(l.`time_taken`) AS `timestamp`, l.`status`, l.`note` FROM `medication_log` l LEFT JOIN `medications` m ON (l.`medication_id` = m.`id`) WHERE m.`user_id`=%u AND `time_taken` > FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start);
+				$query = sprintf('SELECT l.`id`, l.`medication_id`, l.`quantity`, UNIX_TIMESTAMP(l.`time_taken`) AS `timestamp`, l.`status`, l.`note`, UNIX_TIMESTAMP(l.`time_scheduled`) AS scheduled FROM `medication_log` l LEFT JOIN `medications` m ON (l.`medication_id` = m.`id`) WHERE m.`user_id`=%u AND `time_taken` > FROM_UNIXTIME(%u)', $_SESSION['userid'], $data->start);
 			}
 		}
 		// fetch data
