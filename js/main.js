@@ -17,7 +17,7 @@ function create_medication(name,dosage_package,dosage_package_unit,
                             maximum_dosage,maximum_dosage_unit,note)
 {
     var medication_data = {
-        "type":"1",
+        "_type":"1",
         "name":name,
         "dosage_package":dosage_package,
         "dosage_package_unit":dosage_package_unit,
