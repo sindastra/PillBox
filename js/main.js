@@ -10,6 +10,14 @@ var months = [
     "Sep", "Oct", "Nov", "Dec"
 ];
 
+function add_leading_zero(number)
+{
+    if(number < 10)
+        return "0" + number;
+    else
+        return number;
+}
+
 function get_all_medications()
 {
     $.post(requestURL,{json:'{"type":"MEDICATIONS_GET"}'}, function(data){
@@ -52,7 +60,7 @@ function create_medication(name,dosage_package,dosage_package_unit,
 function updateClock()
 {
     var now = new Date();
-    clock.innerHTML = now.getHours() +":"+ now.getMinutes() +":"+ now.getSeconds();
+    clock.innerHTML = add_leading_zero(now.getHours()) +":"+ add_leading_zero(now.getMinutes()) +":"+ add_leading_zero(now.getSeconds());
 }
 
 function updateDate()
