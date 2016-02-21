@@ -270,7 +270,7 @@ switch($data->_type) {
 
 		// storing is non-trivial because there might already be another schedule for this medication already
 		// look for such one(s) first
-		$query = sprintf('SELECT `schedule_id` FROM `medications` WHERE `id`=%u', $data->medication_id);
+		$query = sprintf('SELECT `schedule`=1, `schedule_id` FROM `medications` WHERE `id`=%u', $data->medication_id);
 		$r = mysql_query($query, $mysql);
 		if($r == FALSE) {
 			$result['error'] = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
