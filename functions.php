@@ -67,3 +67,9 @@ function check_password($password_hashed, $password_text, $salt)
 	else
 		return false;
 }
+
+// Very basic user input filtering
+function POST_SECURE($name)
+{
+	return htmlentities($_POST[$name], ENT_QUOTES, "UTF-8");
+}
