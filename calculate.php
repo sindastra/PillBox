@@ -136,7 +136,6 @@ switch($data->_type) {
 						// check if it is still active
 						// if no end time is given, assume end of time
 						if($row['start'] > $data->start && ($row['end'] < $data->end || $data->end == 0 || $row['end'] == 0)) {
-							unset($row['group_id']);
 							$schedules[] = $row;
 						} else {
 							// not active now, ignore
@@ -147,7 +146,6 @@ switch($data->_type) {
 					// check if it is still active
 					// if no end time is given, assume end of time
 					if($row['start'] > $data->start && ($row['end'] < $data->end || $data->end == 0 || $row['end'] == 0)) {
-						unset($row['group_id']);
 						$schedules[] = $row;
 					} else {
 						// not active now, ignore
@@ -164,10 +162,48 @@ switch($data->_type) {
 					// I'll just claim everything is alright
 					break;
 				case ScheduleType::INTERVALS:
-					
+					// every N seconds
+					// find first time in given timespan
+					$time = $schedule['start'];
+					$step = $schedule['interval'];
+					while($time < $data->start)
+						$time += $step;
+
+					// now procede till end of given timespan, or schedule
+					while($time < $data->end && $time < $schedule['end']) {
+						// add to result
+						$result['data'][] = array(
+							'medication_id' => $schedule['medication_id'],
+							'time' => $time,
+							'schedule_id' => $chedule['id']
+						);
+						$time += $step;
+					}
 					break;
 				case ScheduleType::TIMES:
-					
+					// distribute number of intakes evenly across 24 hours
+					$time = $schedule['start'];
+					$times = $schedule['times'];
+
+					// find first valid day
+					while($time < $data->start)
+						$time += 24*60*60; // + 1 day
+
+					// now progress day by day, till end of schedule, or given timespan
+					while($time < $data->end && $time < $schedule['end']) {
+						// now deploy N times evenly across 24 hours
+						$step = (24*60*60)/$times;
+
+						// N times
+						for($i = 0; $i < $times; $i++) {
+							$result['data'][] = array(
+								'medication_id' => $schedule['medication_id'],
+								'time' => ($time + $i * $step),
+								'schedule_id' => $chedule['id']
+							);
+						}
+						$time += 24*60*60; // + 1 day
+					}
 					break;
 				case ScheduleType::DAILY_FIXED_TIME:
 					// This is relatively:
@@ -177,6 +213,7 @@ switch($data->_type) {
 					$time = $schedule['start'];
 					while($time < $data->start)
 						$time += 24*60*60; // + 1 day
+
 					// now go on until either specified timespan, or the schedule ends
 					while($time < $data->end && $time < $schedule['end']) {
 						// push this one to result
@@ -189,7 +226,7 @@ switch($data->_type) {
 					}
 					break;
 				default:
-					$result['error'] = 'Encountered a schedule with unknown type!';
+					$result['error'] = 'Encountered a schedule with unhandled type!';
 					break 2;
 			}
 		}
