@@ -33,6 +33,17 @@ abstract class DeleteType {
 	const MEDICATION = 2;
 	const MEDICATION_LOG = 3;
 	const SCHEDULE = 4;
+
+	public static function fromString($str) {
+		switch($str) {
+			case 'MEASUREMENT': return DeleteType::MEASUREMENT;
+			case 'MEASUREMENT_LOG': return DeleteType::MEASUREMENT_LOG;
+			case 'MEDICATION': return DeleteType::MEDICATION;
+			case 'MEDICATION_LOG': return DeleteType::MEDICATION_LOG;
+			case 'SCHEDULE': return DeleteType::SCHEDULE;
+			default: return -1;
+		}
+	}
 }
 
 abstract class DeleteResult {
@@ -77,6 +88,11 @@ if(!is_numeric($data->id) || $data->id <= 0) {
 	$result['error'] = 'Invalid ID!';
 	echo json_encode($result);
 	exit(0);
+}
+
+// convert from string if required
+if(!is_numeric($data->_type)) {
+	$data->_type = DeleteType::fromString($data->_type);
 }
 
 // execute

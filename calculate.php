@@ -41,6 +41,13 @@
 
 abstract class CalculateTypes {
 	const SCHEDULE = 0;
+
+	public static function fromString($str) {
+		switch($str) {
+			case 'SCHEDULE': return CalculateTypes::SCHEDULE;
+			default: return -1;
+		}
+	}
 }
 
 abstract class CalculateResult {
@@ -99,6 +106,11 @@ if(!is_numeric($data->id) || $data->id <= 0) {
 	$result['error'] = 'Invalid ID!';
 	echo json_encode($result);
 	exit(0);
+}
+
+// convert from string if required
+if(!is_numeric($data->_type)) {
+	$data->_type = CalculateTypes::fromString($data->_type);
 }
 
 // execute

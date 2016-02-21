@@ -61,6 +61,17 @@ abstract class RequestType {
 	const MEASUREMENTS_GET = 2;
 	const MEASUREMENT_LOG_GET = 3;
 	const SCHEDULE_GET = 4;
+
+	public static function fromString($str) {
+		switch($str) {
+			case 'MEDICATIONS_GET': return RequestType::MEDICATIONS_GET;
+			case 'MEDICATION_LOG_GET': return RequestType::MEDICATION_LOG_GET;
+			case 'MEASUREMENTS_GET': return RequestType::MEASUREMENTS_GET;
+			case 'MEASUREMENT_LOG_GET': return RequestType::MEASUREMENT_LOG_GET;
+			case 'SCHEDULE_GET': return RequestType::SCHEDULE_GET;
+			default: return -1;
+		}
+	}
 }
 
 include "functions.php";
@@ -93,6 +104,11 @@ if($data == NULL) {
 	$result['error'] = 'Failed to decode json!';
 	echo json_encode($result);
 	exit(0);
+}
+
+// convert from string if required
+if(!is_numeric($data->_type)) {
+	$data->_type = RequestType::fromString($data->_type);
 }
 
 // execute

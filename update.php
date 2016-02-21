@@ -84,6 +84,17 @@ abstract class UpdateType {
 	const MEDICATION = 2;
 	const MEDICATION_LOG = 3;
 	const SCHEDULE = 4;
+
+	public static function fromString($str) {
+		switch($str) {
+			case 'MEASUREMENT': return UpdateType::MEASUREMENT;
+			case 'MEASUREMENT_LOG': return UpdateType::MEASUREMENT_LOG;
+			case 'MEDICATION': return UpdateType::MEDICATION;
+			case 'MEDICATION_LOG': return UpdateType::MEDICATION_LOG;
+			case 'SCHEDULE': return UpdateType::SCHEDULE;
+			default: return -1;
+		}
+	}
 }
 
 abstract class UpdateResult {
@@ -128,6 +139,11 @@ if(!is_numeric($data->id) || $data->id <= 0) {
 	$result['error'] = 'Invalid ID!';
 	echo json_encode($result);
 	exit(0);
+}
+
+// convert from string if required
+if(!is_numeric($data->_type)) {
+	$data->_type = UpdateType::fromString($data->_type);
 }
 
 // execute

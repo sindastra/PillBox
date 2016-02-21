@@ -90,6 +90,17 @@ abstract class StoreType {
 	const MEASUREMENT_ADD = 3;
 	const MEASUREMENT_LOG = 4;
 	const SCHEDULE_ADD = 5;
+
+	public static function fromString($str) {
+		switch($str) {
+			case 'MEDICATION_ADD': return StoreType::MEDICATION_ADD;
+			case 'MEDICATION_LOG': return StoreType::MEDICATION_LOG;
+			case 'MEASUREMENT_ADD': return StoreType::MEASUREMENT_ADD;
+			case 'MEASUREMENT_LOG': return StoreType::MEASUREMENT_LOG;
+			case 'SCHEDULE_ADD': return StoreType::SCHEDULE_ADD;
+			default: return -1;
+		}
+	}
 }
 
 abstract class LogEntryStatus {
@@ -128,6 +139,11 @@ if($data == NULL) {
 	$result['error'] = 'Failed to decode json!';
 	echo json_encode($result);
 	exit(0);
+}
+
+// convert from string if required
+if(!is_numeric($data->_type)) {
+	$data->_type = StoreType::fromString($data->_type);
 }
 
 // execute
