@@ -1,6 +1,15 @@
 var requestURL = "request.php";
 var storeURL   = "store.php";
 
+var clock = document.getElementById("clock");
+var date  = document.getElementById("date");
+
+var months = [
+    "Jan", "Feb", "Mar", "Apr",
+    "May", "Jun", "Jul", "Aug",
+    "Sep", "Oct", "Nov", "Dec"
+];
+
 function get_all_medications()
 {
     $.post(requestURL,{json:'{"type":"MEDICATIONS_GET"}'}, function(data){
@@ -39,3 +48,20 @@ function create_medication(name,dosage_package,dosage_package_unit,
         console.log(data);
     },"json");
 }
+
+function updateClock()
+{
+    var now = new Date();
+    clock.innerHTML = now.getHours() +":"+ now.getMinutes() +":"+ now.getSeconds();
+}
+
+function updateDate()
+{
+    var now = new Date();
+    date.innerHTML = months[now.getMonth()] +" "+ now.getDate();
+}
+
+setInterval(function(){
+    updateClock();
+    updateDate();
+}, 100);
