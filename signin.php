@@ -45,8 +45,10 @@ if(!array_key_exists("password", $_POST)) {
 	die("Please supply a password!");
 }
 
+$username = POST_SECURE('username');
+
 // see if the username exists, and retrieve its data
-$query = sprintf('SELECT `id`, `username`, `password`, `email`, `salt`, `time` FROM `accounts` WHERE `username`="%s" OR `email`="%s"', $_POST['username'], $_POST['username']);
+$query = sprintf('SELECT `id`, `username`, `password`, `email`, `salt`, `time` FROM `accounts` WHERE `username`="%s" OR `email`="%s"', $username, $username);
 $r = mysql_query($query, $mysql);
 if($r == FALSE) {
 	$error = 'Query ' . $query . ' failed: ' . mysql_error($mysql);

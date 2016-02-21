@@ -41,6 +41,8 @@ init_session();
 include "include/mysql_open_database.inc";
 include "include/cmdline_to_postandget_hack.inc";
 
+$username = POST_SECURE('username');
+$email    = POST_SECURE('email');
 
 // check if sufficient data was provided
 if( !array_key_exists('username', $_POST) || !array_key_exists('password', $_POST) || !array_key_exists('email', $_POST)
@@ -53,7 +55,7 @@ if( !array_key_exists('username', $_POST) || !array_key_exists('password', $_POS
 // TODO: enforce things like minimum length?
 
 // check if username is available
-$query = sprintf('SELECT COUNT(`id`) FROM `accounts` WHERE `username`="%s"', $_POST['username']);
+$query = sprintf('SELECT COUNT(`id`) FROM `accounts` WHERE `username`="%s"', $username);
 $r = mysql_query($query, $mysql);
 if($r == FALSE) {
 	$error = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
@@ -68,7 +70,7 @@ if($count != 0) {
 }
 
 // check if email is available
-$query = sprintf('SELECT COUNT(`id`) FROM `accounts` WHERE `email`="%s"', $_POST['email']);
+$query = sprintf('SELECT COUNT(`id`) FROM `accounts` WHERE `email`="%s"', $email);
 $r = mysql_query($query, $mysql);
 if($r == FALSE) {
 	$error = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
@@ -87,7 +89,7 @@ $salt = generate_salt();
 $password = hash_password($_POST['password'], $salt);
 
 // create accoount
-$query = sprintf('INSERT INTO `accounts` (`username`, `password`, `email`, `salt`, `time`) VALUES("%s", "%s", "%s", "%s", NOW())', $_POST['username'], $password, $_POST['email'], $salt);
+$query = sprintf('INSERT INTO `accounts` (`username`, `password`, `email`, `salt`, `time`) VALUES("%s", "%s", "%s", "%s", NOW())', $username, $password, $email, $salt);
 $r = mysql_query($query, $mysql);
 if($r == FALSE) {
 	$error = 'Query ' . $query . ' failed: ' . mysql_error($mysql);
@@ -112,7 +114,7 @@ if($id == FALSE || $id == 0) {
 
 // log-in user right now
 $_SESSION['userid'] = $id;
-$_SESSION['username'] = $_POST['username'];
+$_SESSION['username'] = $username;
 
 
 
