@@ -56,7 +56,7 @@ function add_leading_zero(number)
 
 function get_all_medications()
 {
-    $.post(requestURL,{json:'{"type":"MEDICATIONS_GET"}'}, function(data){
+    $.post(requestURL,{json:'{"_type":"MEDICATIONS_GET"}'}, function(data){
         data["data"].forEach(function(entry){
             console.log(entry["name"]);
         });
