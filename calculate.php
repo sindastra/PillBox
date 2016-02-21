@@ -108,6 +108,14 @@ if(!is_numeric($data->id) || $data->id <= 0) {
 	exit(0);
 }
 
+// check if _type was passed
+if(!isset($data->_type)) {
+	$result['error'] = 'Please specify calculate type!';
+	echo json_encode($result);
+	exit(0);
+}
+
+
 // convert from string if required
 if(!is_numeric($data->_type)) {
 	$data->_type = CalculateTypes::fromString($data->_type);

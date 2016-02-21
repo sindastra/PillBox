@@ -106,6 +106,13 @@ if($data == NULL) {
 	exit(0);
 }
 
+// check if _type was passed
+if(!isset($data->_type)) {
+	$result['error'] = 'Please specify load type!';
+	echo json_encode($result);
+	exit(0);
+}
+
 // convert from string if required
 if(!is_numeric($data->_type)) {
 	$data->_type = RequestType::fromString($data->_type);
