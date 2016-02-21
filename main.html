@@ -13,10 +13,26 @@
                 <div class="navbar-header">
                     <a class="navbar-brand"><i class="fa fa-fw fa-heart-o text-danger"></i>PillBox!</a>
                 </div>
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Medications <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#" data-toggle="modal" data-target="#modalAddDosage">Add Dosage</a></li>
+                            <li><a href="#" data-toggle="modal" data-target="#modalAddMedication">Add Medication</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Measurements <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#" data-toggle="modal" data-target="#modalTakeMeasurement">Take measurement</a></li>
+                            <li><a href="#" data-toggle="modal" data-target="#modalAddMeasurementType">Add Measurement type</a></li>
+                        </ul>
+                    </li>
+                </ul>
                 <ul class="nav navbar-nav navbar-right">
-                <li><a><big id="date">- -</big></a></li>
-                <li><a><big id="clock">00:00:00</big></a></li>
-            </ul>
+                    <li><a><big id="date">- -</big></a></li>
+                    <li><a><big id="clock">00:00:00</big></a></li>
+                </ul>
             </div>     
         </nav>
         <div class="container">
@@ -62,6 +78,86 @@
                 </div>
             </div>
         </div>
+        <!-- MODAL / ADD MEDICATION-->
+        <div class="modal fade" id="modalAddMedication" tabindex="-1" role="dialog" aria-labelby="test">
+            <div class="modal-dialog" role="document">
+                <form method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Add Medication</h4>
+                        </div>
+                            <div class="modal-body">            
+
+                            </div>
+                            <div class="modal-footer">
+                            <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
+                            </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- MODAL -->
+        <!-- MODAL / ADD DOSAGE-->
+        <div class="modal fade" id="modalAddDosage" tabindex="-1" role="dialog" aria-labelby="test">
+            <div class="modal-dialog" role="document">
+                <form method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Add Dosage</h4>
+                        </div>
+                            <div class="modal-body">            
+
+                            </div>
+                            <div class="modal-footer">
+                            <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
+                            </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- MODAL -->
+        <!-- MODAL / ADD MEASUREMENT TYPE-->
+        <div class="modal fade" id="modalAddMeasurementType" tabindex="-1" role="dialog" aria-labelby="test">
+            <div class="modal-dialog" role="document">
+                <form method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Add Measurement Type</h4>
+                        </div>
+                            <div class="modal-body">            
+
+                            </div>
+                            <div class="modal-footer">
+                            <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
+                            </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- MODAL -->
+        <!-- MODAL / TAKE MEASUREMENT -->
+        <div class="modal fade" id="modalTakeMeasurement" tabindex="-1" role="dialog" aria-labelby="test">
+            <div class="modal-dialog" role="document">
+                <form method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Take Measurement</h4>
+                        </div>
+                            <div class="modal-body">            
+
+                            </div>
+                            <div class="modal-footer">
+                            <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
+                            </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- MODAL -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script src="js/main.js"></script>
