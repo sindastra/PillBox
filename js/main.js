@@ -97,8 +97,69 @@ function create_medication(name,dosage_package,dosage_package_unit,
         "maximum_dosage_unit":maximum_dosage_unit,
         "note":note
     }
-    
+
     $.post(storeURL, {json:JSON.stringify(medication_data)}, function(data){
+        console.log(data);
+    },"json");
+}
+
+function create_medication_log(medication_id, quantity, timestamp, status, note)
+{
+    var medication_log_data = {
+        "_type":"2",
+        "medication_id":medication_id,
+        "quantity":quantity,
+        "status":status,
+        "note":note,
+        "timestamp":(Date.now()/1000) // Time is running... Ha. Deja vu.
+    }
+
+    $.post(storeURL, {json:JSON.stringify(medication_log_data)}, function(data){
+        console.log(data);
+    },"json");
+}
+
+function create_measurement_type(name, unit)
+{
+    var measurement_type_data = {
+        "_type":"3",
+        "name":name,
+        "unit":unit
+    }
+
+    $.post(storeURL, {json:JSON.stringify(measurement_type_data)}, function(data){
+        console.log(data);
+    },"json");
+}
+
+function create_measurement_taken(id, value)
+{
+    var measurement_taken_data = {
+        "_type":"4",
+        "measurement_id":id,
+        "value":value,
+        "timestamp":(Date.now()/1000) // Time is running... Ha.
+    }
+
+    $.post(storeURL, {json:JSON.stringify(measurement_taken_data)}, function(data){
+        console.log(data);
+    },"json");
+}
+
+function create_schedule(medication_id, type, start, times, end, interval)
+{
+    var schedule_data = {
+        "_type":"5",
+        "medication_id":medication_id,
+        "type":type,
+        "start":start,
+        "times":times,
+        "end":end,
+        "interval":interval,
+        "timestamp":(Date.now()/1000) // Time is running... Ha. Deja vu.
+    }
+
+    $.post(storeURL, {json:JSON.stringify(schedule_data)}, function(data){
         console.log(data);
     },"json");
 }
