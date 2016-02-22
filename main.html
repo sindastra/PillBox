@@ -143,6 +143,11 @@
                         </div>
                             <div class="modal-body">
                                 <div id="addmedselhere"></div>
+                                <input type="text" id="quantity" class="form-control" placeholder="quantity">
+                                <input type="text" id="timestamp" class="form-control" placeholder="timestamp">
+                                <input type="text" id="scheduled" class="form-control" placeholder="scheduled">
+                                <input type="text" id="status" class="form-control" placeholder="status">
+                                <input type="text" id="note" class="form-control" placeholder="note">
                             </div>
                             <div class="modal-footer">
                             <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
@@ -163,7 +168,6 @@
                         </div>
                             <div class="modal-body">
                                 <input type="text" id="name" class="form-control" placeholder="Name (for example 'weight')">
-                                <br />
                                 <input type="text" id="unit" class="form-control" placeholder="Unit (for example 'kg')">
                             </div>
                             <div class="modal-footer">
@@ -184,7 +188,9 @@
                             <h4 class="modal-title">Take Measurement</h4>
                         </div>
                             <div class="modal-body">            
-
+                                <input type="text" id="measurement_id" class="form-control" placeholder="measurement_id">
+                                <input type="text" id="value" class="form-control" placeholder="value">
+                                <input type="text" id="timestamp" class="form-control" placeholder="timestamp">
                             </div>
                             <div class="modal-footer">
                             <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
