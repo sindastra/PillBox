@@ -37,6 +37,19 @@ function generate_add_medication_select()
     return select;
 }
 
+function generate_add_measurement_select()
+{
+    var select = document.createElement("select");
+    select.id = "measurement_id";
+    measurements.forEach(function(entry){
+        var option = document.createElement("option");
+        option.value = entry["id"];
+        option.innerHTML = entry["name"];
+        select.appendChild(option);
+    });
+    return select;
+}
+
 function clear_medications_table()
 {
     medicationTable.innerHTML = "";
@@ -321,4 +334,9 @@ document.getElementById("addmedbutton").addEventListener("click", function(){
     var selplace = document.getElementById("addmedselhere");
     selplace.innerHTML = "";
     selplace.appendChild(generate_add_medication_select());
+});
+document.getElementById("addmeasurementbutton").addEventListener("click", function(){
+    var selplace = document.getElementById("addmeasurementselhere");
+    selplace.innerHTML = "";
+    selplace.appendChild(generate_add_measurement_select());
 });

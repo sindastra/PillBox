@@ -24,7 +24,7 @@
                     <li>
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Measurements <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" data-toggle="modal" data-target="#modalTakeMeasurement">Take measurement</a></li>
+                            <li><a href="#" id="addmeasurementbutton" data-toggle="modal" data-target="#modalTakeMeasurement">Take measurement</a></li>
                             <li><a href="#" data-toggle="modal" data-target="#modalAddMeasurementType">Add Measurement type</a></li>
                         </ul>
                     </li>
@@ -187,8 +187,8 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <h4 class="modal-title">Take Measurement</h4>
                         </div>
-                            <div class="modal-body">            
-                                <input type="text" id="measurement_id" class="form-control" placeholder="measurement_id">
+                            <div class="modal-body">
+                                <div id="addmeasurementselhere"></div>
                                 <input type="text" id="value" class="form-control" placeholder="value">
                                 <input type="text" id="timestamp" class="form-control" placeholder="timestamp">
                             </div>
