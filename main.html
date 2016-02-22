@@ -17,8 +17,8 @@
                     <li>
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Medications <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" data-toggle="modal" data-target="#modalAddDosage">Add Dosage</a></li>
-                            <li><a href="#" id="addmedbutton" data-toggle="modal" data-target="#modalAddMedication">Add Medication</a></li>
+                            <li><a href="#" id="addmedbutton" data-toggle="modal" data-target="#modalAddDosage">Add Dosage</a></li>
+                            <li><a href="#" data-toggle="modal" data-target="#modalAddMedication">Add Medication</a></li>
                         </ul>
                     </li>
                     <li>
@@ -108,7 +108,6 @@
                             <h4 class="modal-title">Add Medication</h4>
                         </div>
                             <div class="modal-body">
-                                <div id="addmedselhere"></div>
                                 <input type="text" id="name" class="form-control" placeholder="name">
                                 <input type="text" id="active_agent" class="form-control" placeholder="active_agent">
                                 <input type="text" id="dosage_package" class="form-control" placeholder="dosage_package">
@@ -143,7 +142,7 @@
                             <h4 class="modal-title">Add Dosage</h4>
                         </div>
                             <div class="modal-body">
-
+                                <div id="addmedselhere"></div>
                             </div>
                             <div class="modal-footer">
                             <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
