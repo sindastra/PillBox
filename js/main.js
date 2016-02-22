@@ -139,13 +139,30 @@ function get_all_measurements() // At this point it's just about getting it to "
 }
 
 document.getElementById("ad_submit").addEventListener("click", function(){
-    
+    var m = {
+        "medication_id":document.getElementById("add_medication_select").value,
+        "quantity":document.getElementById("quantity").value,
+        "timestamp":document.getElementById("timestamp").value,
+        "scheduled":document.getElementById("sceduled").value,
+        "status":document.getElementById("status").value,
+        "note":document.getElementById("note").value
+    }
+    create_medication_log(m.medication_id, m.quantity, m.timestamp, m.scheduled, m.status, m.note);
 });
 document.getElementById("amm_submit").addEventListener("click", function(){
-    
+    var m = {
+        "name":document.getElementById("mt_name").value,
+        "unit":document.getElementById("unit").value,
+    }
+    create_measurement_type(m.name, m.unit);
 });
 document.getElementById("tm_submit").addEventListener("click", function(){
-    
+    var m = {
+        "measurement_id":document.getElementById("measurement_id").value,
+        "value":document.getElementById("value").value,
+        "timestamp":document.getElementById("timestamp").value,
+    }
+    create_measurement_taken(m.measurement_id, m.value, m.timestamp);
 });
 
 function create_medication(name,dosage_package,dosage_package_unit,
@@ -201,7 +218,7 @@ document.getElementById("am_submit").addEventListener("click", function(){
                      m.maximum_dosage,m.maximum_dosage_unit,m.note);
 });
 
-function create_medication_log(medication_id, quantity, timestamp, status, note)
+function create_medication_log(medication_id, quantity, timestamp, scheduled, status, note)
 {
     var medication_log_data = {
         "_type":"2",
@@ -209,7 +226,8 @@ function create_medication_log(medication_id, quantity, timestamp, status, note)
         "quantity":quantity,
         "status":status,
         "note":note,
-        "timestamp":(Date.now()/1000) // Time is running... Ha. Deja vu.
+        "timestamp":(Date.now()/1000), // Time is running... Ha. Deja vu.
+        "scheduled":scheduled
     }
 
     $.post(storeURL, {json:JSON.stringify(medication_log_data)}, function(data){
@@ -230,7 +248,7 @@ function create_measurement_type(name, unit)
     },"json");
 }
 
-function create_measurement_taken(id, value)
+function create_measurement_taken(id, value, timestamp)
 {
     var measurement_taken_data = {
         "_type":"4",
