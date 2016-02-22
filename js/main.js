@@ -2,6 +2,7 @@ var requestURL = "load.php";
 var storeURL   = "store.php";
 var deleteURL  = "delete.php";
 var updateURL  = "update.php";
+var calculateURL  = "calculate.php";
 
 var medications;
 var medicationsLoadSuccess = false;
@@ -147,6 +148,35 @@ function get_all_measurements() // At this point it's just about getting it to "
             }, "json");
         measurements = data["data"];
     
+        });
+    }, "json");
+}
+
+function get_all_scheduled() {
+    var medicationsTodayTable = document.getElementById("medicationsToday");
+    var medicationsYesterdayTable = document.getElementById("medicationsYesterday");
+
+    var medications_today_request_data = {
+        "_type":"SCHEDULE",
+        "medication_id":0,
+        "start":0,
+        "end":0
+    }
+    $.post(calculateURL, {json:JSON.stringify(medications_today_request_data)}, function(data){
+        data["data"].forEach(function(subentry){
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            var date = new Date(subentry["time"]*1000);
+            var state = "";
+            switch(subentry["status"]) {
+                case 0: state = "took";
+                case 1: state = "skipped";
+                case 2: state = "missed";
+                case 3: state = "not sure about";
+            }
+            var med_name = "Some Medication";
+
+            var text = months[date.getMonth()] +" "+ add_leading_zero(date.getDate()) +" "+ add_leading_zero(date.getHours())+":"+add_leading_zero(date.getMinutes()) + " " + state + med_name;
         });
     }, "json");
 }
@@ -318,6 +348,7 @@ setInterval(function(){
         clear_medications_table();
         load_medications_into_table(medications);
         get_all_measurements(); // Lazy. (:
+        get_all_scheduled(); // Lazy. (:
     }
     else
     {
