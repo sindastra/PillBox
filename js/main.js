@@ -101,16 +101,40 @@ function load_measurements_into_table(data)
     });
 }
 
-// WIP
 function get_all_measurements() // At this point it's just about getting it to "run".
 {
+    var measurementsTable = document.getElementById("measurementsTable");
+    
     $.post(requestURL,{json:'{"_type":"MEASUREMENTS_GET"}'}, function(data){
         data["data"].forEach(function(entry){
-            console.log("IDK");
-        });
-        measurements = data["data"];
         
-        load_measurements_into_table(measurements);
+            measurementsTable.innerHTML = "";
+            
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            var inner_table = document.createElement("table");
+            
+            td.innerHTML = entry["name"];
+            tr.appendChild(td);
+            measurementsTable.appendChild(tr);
+            
+            td.appendChild(inner_table);
+            
+            $.post(requestURL,{json:'{"_type":"MEASUREMENT_LOG_GET","measurement_id":"0","start":"0","end":"0"}'}, function(data){
+                data["data"].forEach(function(subentry){
+                    var tr = document.createElement("tr");
+                    var td = document.createElement("td");
+                    var date = new Date(subentry["timestamp"]*1000);
+                    td.innerHTML = subentry["value"] +" "+ entry["unit"] +" - "+ 
+                    months[date.getMonth()] +" "+ add_leading_zero(date.getDate()) +" "+
+                    add_leading_zero(date.getHours())+":"+add_leading_zero(date.getMinutes());
+                    tr.appendChild(td);
+                    inner_table.appendChild(tr);
+                });
+            }, "json");
+        measurements = data["data"];
+    
+        });
     }, "json");
 }
 
@@ -262,6 +286,7 @@ setInterval(function(){
     {
         clear_medications_table();
         load_medications_into_table(medications);
+        get_all_measurements(); // Lazy. (:
     }
     else
     {
