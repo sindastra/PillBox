@@ -135,7 +135,7 @@ function get_all_measurements() // At this point it's just about getting it to "
             
             td.appendChild(inner_table);
             
-            $.post(requestURL,{json:'{"_type":"MEASUREMENT_LOG_GET","measurement_id":"0","start":"0","end":"0"}'}, function(data){
+            $.post(requestURL,{json:'{"_type":"MEASUREMENT_LOG_GET","measurement_id":"'+entry["id"]+'","start":"0","end":"0"}'}, function(data){
                 data["data"].forEach(function(subentry){
                     var tr = document.createElement("tr");
                     var td = document.createElement("td");
