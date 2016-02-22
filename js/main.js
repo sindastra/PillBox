@@ -117,28 +117,6 @@ function get_all_measurements() // At this point it's just about getting it to "
 document.getElementById("ad_submit").addEventListener("click", function(){
     
 });
-document.getElementById("am_submit").addEventListener("click", function(){
-    var m = {
-        "name":document.getElementById("am_name").vaue,
-        "dosage_package":document.getElementById("dosage_package").vaue,
-        "dosage_package_unit":document.getElementById("dosage_package_unit").vaue,
-        "active_agent":document.getElementById("active_agent").vaue,
-        "dosage_to_take":document.getElementById("dosage_to_take").vaue,
-        "dosage_to_take_unit":document.getElementById("dosage_to_take_unit").vaue,
-        "colour":document.getElementById("colour").vaue,
-        "shape":document.getElementById("shape").vaue,
-        "food_instructions":document.getElementById("food_instructions").vaue,
-        "indication":document.getElementById("indication").vaue,
-        "minimum_spacing":document.getElementById("minimum_spacing").vaue,
-        "minimum_spacing_unit":document.getElementById("minimum_spacing_unit").vaue,
-        "maximum_dosage":document.getElementById("maximum_dosage").vaue,
-        "maximum_dosage_unit":document.getElementById("maximum_dosage_unit").vaue,
-        "note":document.getElementById("note").vaue
-    }
-    create_medication(m.name, m.dosage_package, m.dosage_package_unit,m.active_agent,m.dosage_to_take,m.dosage_to_take_unit,
-                     m.colour,m.shape,m.food_instructions,m.indication,m.minimum_spacing,m.minimum_spacing_unit,
-                     m.maximum_dosage,m.maximum_dosage_unit,m.note);
-});
 document.getElementById("amm_submit").addEventListener("click", function(){
     
 });
@@ -175,6 +153,29 @@ function create_medication(name,dosage_package,dosage_package_unit,
         console.log(data);
     },"json");
 }
+
+document.getElementById("am_submit").addEventListener("click", function(){
+    var m = {
+        "name":document.getElementById("am_name").vaue,
+        "dosage_package":document.getElementById("dosage_package").vaue,
+        "dosage_package_unit":document.getElementById("dosage_package_unit").vaue,
+        "active_agent":document.getElementById("active_agent").vaue,
+        "dosage_to_take":document.getElementById("dosage_to_take").vaue,
+        "dosage_to_take_unit":document.getElementById("dosage_to_take_unit").vaue,
+        "colour":document.getElementById("colour").vaue,
+        "shape":document.getElementById("shape").vaue,
+        "food_instructions":document.getElementById("food_instructions").vaue,
+        "indication":document.getElementById("indication").vaue,
+        "minimum_spacing":document.getElementById("minimum_spacing").vaue,
+        "minimum_spacing_unit":document.getElementById("minimum_spacing_unit").vaue,
+        "maximum_dosage":document.getElementById("maximum_dosage").vaue,
+        "maximum_dosage_unit":document.getElementById("maximum_dosage_unit").vaue,
+        "note":document.getElementById("note").vaue
+    }
+    create_medication(m.name, m.dosage_package, m.dosage_package_unit,m.active_agent,m.dosage_to_take,m.dosage_to_take_unit,
+                     m.colour,m.shape,m.food_instructions,m.indication,m.minimum_spacing,m.minimum_spacing_unit,
+                     m.maximum_dosage,m.maximum_dosage_unit,m.note);
+});
 
 function create_medication_log(medication_id, quantity, timestamp, status, note)
 {
