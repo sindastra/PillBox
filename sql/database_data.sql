@@ -24,6 +24,18 @@ UNLOCK TABLES;
 
 LOCK TABLES `medications` WRITE;
 /*!40000 ALTER TABLE `medications` DISABLE KEYS */;
-INSERT INTO `medications` VALUES (1,1,'Paracetamol','',500,'mg',2,'Tablet',0,0,0,'Take when having pain.',4,'Hours',4000,'mg per day',0,NULL,'Only take when having pain.','2016-02-20 17:36:01');
+INSERT INTO `medications` VALUES (1,1,'Paracetamol','',500,'mg',2,'Tablet',0,0,0,'Take when having pain.',4,'Hours',4000,'mg per day',1,1,'Only take when having pain.','2016-02-20 17:36:01'),(2,1,'Estrofem','estradiol',2,'mg',4,'mg',0,0,0,'-',6,'hours',4,'pills',0,NULL,'Don\'t take all at once!','2016-02-21 08:57:31'),(3,1,'Ibuprofen','',400,'mg',1,'Tablet',0,0,0,'Take when having pain.',3,'Hours',3,'Pills per day',1,1,'Only take when having pain.','2016-02-20 17:36:01')
 /*!40000 ALTER TABLE `medications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `measurement_log` WRITE;
+/*!40000 ALTER TABLE `measurement_log` DISABLE KEYS */;
+INSERT INTO `measurement_log` VALUES (1,1,60,'2016-02-21 16:02:53','2016-02-21 16:02:51'),(2,1,58,'2016-02-21 21:01:31','2016-02-21 21:01:29'),(3,2,165,'2016-02-21 21:07:01','2016-02-21 21:07:00'),(4,2,165,'2016-02-21 22:02:04','2016-02-21 22:02:02');
+/*!40000 ALTER TABLE `measurement_log` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `measurements` WRITE;
+/*!40000 ALTER TABLE `measurements` DISABLE KEYS */;
+INSERT INTO `measurements` VALUES (1,1,'Weight','Kg','2016-02-21 15:57:34'),(2,1,'Height','cm','2016-02-21 21:06:25');
+/*!40000 ALTER TABLE `measurements` ENABLE KEYS */;
 UNLOCK TABLES;
