@@ -24,7 +24,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `medications` WRITE;
 /*!40000 ALTER TABLE `medications` DISABLE KEYS */;
-INSERT INTO `medications` VALUES (1,1,'Paracetamol','',500,'mg',2,'Tablet',0,0,0,'Take when having pain.',4,'Hours',4000,'mg per day',1,1,'Only take when having pain.','2016-02-20 17:36:01'),(2,1,'Estrofem','estradiol',2,'mg',4,'mg',0,0,0,'-',6,'hours',4,'pills',0,NULL,'Don\'t take all at once!','2016-02-21 08:57:31'),(3,1,'Ibuprofen','',400,'mg',1,'Tablet',0,0,0,'Take when having pain.',3,'Hours',3,'Pills per day',1,1,'Only take when having pain.','2016-02-20 17:36:01')
+INSERT INTO `medications` VALUES (1,1,'Paracetamol','',500,'mg',2,'Tablet',0,0,0,'Take when having pain.',4,'Hours',4000,'mg per day',1,1,'Only take when having pain.','2016-02-20 17:36:01'),(2,1,'Estrofem','estradiol',2,'mg',4,'mg',0,0,0,'-',6,'hours',4,'pills',0,NULL,'Don\'t take all at once!','2016-02-21 08:57:31'),(3,1,'Ibuprofen','',400,'mg',1,'Tablet',0,0,0,'Take when having pain.',3,'Hours',3,'Pills per day',1,1,'Only take when having pain.','2016-02-20 17:36:01');
 /*!40000 ALTER TABLE `medications` ENABLE KEYS */;
 UNLOCK TABLES;
 
