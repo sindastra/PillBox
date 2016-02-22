@@ -120,9 +120,10 @@ function get_all_measurements() // At this point it's just about getting it to "
     var measurementsTable = document.getElementById("measurementsTable");
     
     $.post(requestURL,{json:'{"_type":"MEASUREMENTS_GET"}'}, function(data){
-        data["data"].forEach(function(entry){
         
-            measurementsTable.innerHTML = "";
+        measurementsTable.innerHTML = "";
+        
+        data["data"].forEach(function(entry){
             
             var tr = document.createElement("tr");
             var td = document.createElement("td");
