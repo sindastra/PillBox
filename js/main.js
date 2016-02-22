@@ -22,6 +22,19 @@ function generate_alertbox_error(text)
     return alertBox;
 }
 
+function generate_add_medication_select()
+{
+    var select = document.createElement("select");
+    select.id = "add_medication_select";
+    medications.forEach(function(entry){
+        var option = document.createElement("option");
+        option.value = entry["id"];
+        option.innerHTML = entry["name"];
+        select.appendChild(option);
+    });
+    return select;
+}
+
 function clear_medications_table()
 {
     medicationTable.innerHTML = "";
@@ -64,7 +77,7 @@ function get_all_medications()
     }, "json").done(function(){
         medicationsLoadSuccess = true;
         medicationsLoadErrorCount = 0;
-        console.log("Medication load success.")
+        console.log("Medication load success.");
     }).fail(function(){
         medicationsLoadSuccess = false;
         medicationsLoadErrorCount++;
@@ -199,3 +212,9 @@ setInterval(function(){
         }
     } 
 }, 3000);
+
+document.getElementById("addmedbutton").addEventListener("click", function(){
+    var selplace = document.getElementById("addmedselhere");
+    selplace.innerHTML = "";
+    selplace.appendChild(generate_add_medication_select());
+});

@@ -18,7 +18,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Medications <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="#" data-toggle="modal" data-target="#modalAddDosage">Add Dosage</a></li>
-                            <li><a href="#" data-toggle="modal" data-target="#modalAddMedication">Add Medication</a></li>
+                            <li><a href="#" id="addmedbutton" data-toggle="modal" data-target="#modalAddMedication">Add Medication</a></li>
                         </ul>
                     </li>
                     <li>
@@ -108,7 +108,22 @@
                             <h4 class="modal-title">Add Medication</h4>
                         </div>
                             <div class="modal-body">
-
+                                <div id="addmedselhere"></div>
+                                <input type="text" id="name" class="form-control" placeholder="name">
+                                <input type="text" id="active_agent" class="form-control" placeholder="active_agent">
+                                <input type="text" id="dosage_package" class="form-control" placeholder="dosage_package">
+                                <input type="text" id="dosage_package_unit" class="form-control" placeholder="dosage_package_unit">
+                                <input type="text" id="dosage_to_take" class="form-control" placeholder="dosage_to_take">
+                                <input type="text" id="dosage_to_take_unit" class="form-control" placeholder="dosage_to_take_unit">
+                                <input type="text" id="colour" class="form-control" placeholder="colour">
+                                <input type="text" id="shape" class="form-control" placeholder="shape">
+                                <input type="text" id="food_instructions" class="form-control" placeholder="food_instructions">
+                                <input type="text" id="indication" class="form-control" placeholder="indication">
+                                <input type="text" id="minimum_spacing" class="form-control" placeholder="minimum_spacing">
+                                <input type="text" id="minimum_spacing_unit" class="form-control" placeholder="minimum_spacing_unit">
+                                <input type="text" id="maximum_dosage" class="form-control" placeholder="maximum_dosage">
+                                <input type="text" id="maximum_dosage_unit" class="form-control" placeholder="maximum_dosage_unit">
+                                <input type="text" id="note" class="form-control" placeholder="note">
                             </div>
                             <div class="modal-footer">
                             <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
@@ -148,7 +163,9 @@
                             <h4 class="modal-title">Add Measurement Type</h4>
                         </div>
                             <div class="modal-body">
-
+                                <input type="text" id="name" class="form-control" placeholder="Name (for example 'weight')">
+                                <br />
+                                <input type="text" id="unit" class="form-control" placeholder="Unit (for example 'kg')">
                             </div>
                             <div class="modal-footer">
                             <button class="btn btn-success" type="submit" onclick="return false;">Save</button>
